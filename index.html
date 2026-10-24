@@ -3,37 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <meta
-    name="description"
-    content="Arquivo Investigativo: explore temas, documentos, pesquisas e linhas do tempo."
-  >
-
+  <meta name="description" content="Arquivo Investigativo: explore temas, documentos, pesquisas e linhas do tempo.">
   <meta name="theme-color" content="#20252C">
-
   <title>Arquivo Investigativo</title>
-
-  <!-- Estilo do site -->
   <link rel="stylesheet" href="./css/main.css">
-
-  <!-- Configuração do aplicativo instalável -->
   <link rel="manifest" href="./manifest.webmanifest">
-
-  <!-- Ícone da aba do navegador -->
-  <link
-    rel="icon"
-    type="image/png"
-    sizes="192x192"
-    href="./icons/icon-192.png"
-  >
-
-  <!-- Ícone para dispositivos Apple -->
-  <link
-    rel="apple-touch-icon"
-    href="./icons/icon-192.png"
-  >
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" href="./icons/icon-192.png">
 </head>
-
 <body>
   <header>
     <h1>Arquivo Investigativo</h1>
@@ -43,10 +20,38 @@
   <main>
     <section id="inicio">
       <h2>Central de investigação</h2>
-      <p>
-        Seu espaço para explorar informações,
-        documentos e descobertas.
-      </p>
+      <p>Seu espaço para explorar informações, documentos e descobertas.</p>
+    </section>
+
+    <section id="conta">
+      <h2>Acesso ao arquivo</h2>
+      <p>Crie sua conta ou entre para guardar suas investigações.</p>
+
+      <form id="form-cadastro">
+        <h3>Criar conta</h3>
+        <label for="cadastro-email">E-mail</label>
+        <input id="cadastro-email" type="email" autocomplete="email" required>
+
+        <label for="cadastro-senha">Senha</label>
+        <input id="cadastro-senha" type="password" autocomplete="new-password" minlength="8" required>
+
+        <button type="submit">Criar conta</button>
+      </form>
+
+      <form id="form-login">
+        <h3>Já tenho uma conta</h3>
+        <label for="login-email">E-mail</label>
+        <input id="login-email" type="email" autocomplete="email" required>
+
+        <label for="login-senha">Senha</label>
+        <input id="login-senha" type="password" autocomplete="current-password" required>
+
+        <button type="submit">Entrar</button>
+      </form>
+
+      <button id="btn-sair" type="button" hidden>Sair da conta</button>
+      <p id="mensagem-conta" role="status" aria-live="polite"></p>
+      <p id="estado-conta"></p>
     </section>
   </main>
 
@@ -54,7 +59,7 @@
     <p>Arquivo Investigativo</p>
   </footer>
 
-  <!-- JavaScript principal -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script type="module" src="./js/main.js"></script>
 </body>
 </html>
