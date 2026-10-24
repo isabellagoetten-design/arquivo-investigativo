@@ -1,0 +1,25 @@
+
+{
+  "id": "/arquivo-investigativo/",
+  "name": "Arquivo Investigativo",
+  "short_name": "Meu Arquivo",
+  "description": "Um atlas interativo de pesquisas, descobertas e conexões.",
+  "lang": "pt-BR",
+  "start_url": "/arquivo-investigativo/",
+  "scope": "/arquivo-investigativo/",
+  "display": "standalone",
+  "background_color": "#F4F1E9",
+  "theme_color": "#20252C",
+  "icons": [
+    {
+      "src": "/arquivo-investigativo/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/arquivo-investigativo/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
