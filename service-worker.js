@@ -70,8 +70,11 @@ self.addEventListener("fetch", (event) => {
       if (cached) return cached;
 
       if (event.request.mode === "navigate") {
-        const home = await caches.match("./index.html");
-        if (home) return home;
+        const home = await caches.match(
+  new URL("./index.html", self.registration.scope).href
+);
+
+if (home) return home;
       }
 
       return new Response(
