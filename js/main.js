@@ -50,9 +50,13 @@ cadastro.addEventListener("submit", async (evento) => {
   const senha = document.getElementById("cadastro-senha").value;
 
   const { data, error } = await cliente.auth.signUp({
-    email,
-    password: senha
-  });
+  email,
+  password: senha,
+  options: {
+    emailRedirectTo:
+      "https://isabellagoetten-design.github.io/arquivo-investigativo/"
+  }
+});
 
   if (error) {
     mostrarMensagem("Erro ao criar conta: " + error.message);
