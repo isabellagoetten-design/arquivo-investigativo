@@ -1304,3 +1304,27 @@ input {
     min-width: 0;
   }
 }
+
+
+/* Último ajuste de encaixe: rotação sutil e campos mais estreitos */
+@media (min-width: 761px) {
+  .form-panel {
+    width: 78% !important;
+    transform: rotate(-5deg) !important;
+    transform-origin: 50% 50% !important;
+    justify-self: center;
+  }
+
+  .form-panel .auth-form,
+  .form-panel .auth-form input,
+  .form-panel .primary-button {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .form-panel .auth-form input {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
