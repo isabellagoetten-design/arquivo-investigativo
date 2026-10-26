@@ -845,3 +845,96 @@ a:focus-visible {
     transform: none;
   }
 }
+
+
+/* CADERNO ORIGINAL ENVIADO PELA USUÁRIA */
+@media (min-width: 761px) {
+  .access-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 0;
+    min-height: min(76vw, 760px);
+    background-image: url("../imagem-caderno.png");
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: 100% 100%;
+  }
+
+  .visual-panel {
+    min-height: 0;
+    height: 100%;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+
+  .visual-panel > * {
+    display: none !important;
+  }
+
+  .form-panel {
+    align-self: center;
+    margin: 0 5% 0 4%;
+    padding: 34px 8% 28px 12%;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    transform: rotate(0);
+  }
+
+  .form-panel::before,
+  .form-panel::after {
+    display: none;
+  }
+
+  .form-footer {
+    border-top-color: #4e0a0b40;
+  }
+}
+
+@media (max-width: 760px) {
+  .access-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    background: transparent;
+  }
+
+  .visual-panel {
+    display: block;
+    width: 100%;
+    min-height: 0;
+    aspect-ratio: 3 / 2;
+    border: 0;
+    border-radius: 0;
+    background: url("../imagem-caderno.png") center / contain no-repeat;
+    box-shadow: none;
+  }
+
+  .visual-panel > * {
+    display: none !important;
+  }
+
+  .form-panel {
+    margin-top: -2px;
+    padding: 28px 22px 26px 40px;
+    border: 1.5px solid #d8c6b6;
+    border-radius: 3px 12px 4px 7px;
+    background:
+      linear-gradient(90deg, transparent 27px, #e3879270 28px, transparent 29px),
+      repeating-linear-gradient(to bottom, transparent 0 31px, #5a86cb20 32px, transparent 33px),
+      #fffdf7;
+    box-shadow: 5px 6px 0 #4e0a0b18;
+    transform: none;
+  }
+
+  .form-panel::before {
+    display: block;
+  }
+
+  .form-panel::after {
+    display: block;
+  }
+}
