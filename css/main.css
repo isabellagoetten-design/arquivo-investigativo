@@ -822,3 +822,55 @@ a:focus-visible {
     transform: rotate(0.5deg);
   }
 }
+
+/* ARQUIVO INVESTIGATIVO: LIMPEZA DO MURAL */
+
+.visual-panel {
+  overflow: hidden;
+  min-height: 590px;
+  border: 0;
+  border-radius: 4px;
+  background-color: #f4db9a;
+  background-image:
+    radial-gradient(#4e0a0b18 0.7px, transparent 0.7px);
+  background-size: 7px 7px;
+  box-shadow: none;
+}
+
+.visual-panel::before,
+.visual-panel::after,
+.visual-panel .orbit,
+.visual-panel .shape {
+  display: none;
+}
+
+.illustration-card {
+  border: 1px solid #4e0a0b60;
+  background-color: #fffdf7;
+  box-shadow: 5px 6px 0 #4e0a0b20;
+  transform: rotate(-5deg);
+}
+
+.illustration-card img {
+  background: transparent;
+}
+
+.mini-note {
+  border: 1px solid #4e0a0b70;
+  border-radius: 0;
+  box-shadow: 3px 4px 0 #4e0a0b18;
+}
+
+.note-yellow {
+  background-color: #f4db9a;
+}
+
+.note-pink {
+  background-color: #fff0ed;
+}
+
+.decorative-tag {
+  border: 1px solid #4e0a0b;
+  background-color: #ea6993;
+  box-shadow: 3px 3px 0 #4e0a0b20;
+}
