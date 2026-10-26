@@ -881,7 +881,7 @@ a:focus-visible {
     border-radius: 0;
     background: transparent;
     box-shadow: none;
-    transform: rotate(0);
+    transform: rotate(-2deg);
   }
 
   .form-panel::before,
