@@ -1267,3 +1267,16 @@ input {
     transform-origin: 50% 50% !important;
   }
 }
+
+
+/* Correção após conferir a captura: inclinação mais discreta para caber na página */
+@media (min-width: 761px) {
+  .form-panel {
+    transform: rotate(-2.5deg) !important;
+    transform-origin: 50% 50% !important;
+  }
+
+  .form-heading h1 {
+    text-transform: uppercase !important;
+  }
+}
