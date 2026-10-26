@@ -709,3 +709,116 @@ a:focus-visible {
     animation-duration: 0.01ms !important;
   }
 }
+
+/* NOVA COMPOSIÇÃO: MURAL + CADERNO */
+
+.access-layout {
+  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
+  align-items: stretch;
+  gap: clamp(24px, 4vw, 54px);
+  min-height: 620px;
+}
+
+/* Lado esquerdo: mural investigativo */
+.visual-panel {
+  min-height: 590px;
+  border-radius: 8px 22px 6px 15px;
+  border: 2px solid var(--vinho);
+  background-color: #e38792;
+  background-image:
+    repeating-linear-gradient(
+      135deg,
+      #ffffff12 0,
+      #ffffff12 2px,
+      transparent 2px,
+      transparent 12px
+    );
+  box-shadow: 8px 9px 0 #4e0a0b20;
+}
+
+/* Lado direito: caderno de investigação */
+.form-panel {
+  padding: 38px 28px 32px 48px;
+  border: 1.5px solid #d8c6b6;
+  border-radius: 4px 14px 5px 8px;
+  background-color: #fffdf7;
+  background-image:
+    linear-gradient(
+      90deg,
+      transparent 29px,
+      #e3879270 30px,
+      transparent 31px
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0,
+      transparent 31px,
+      #5a86cb20 32px,
+      transparent 33px
+    );
+  box-shadow: 7px 8px 0 #4e0a0b20;
+  transform: rotate(1deg);
+}
+
+/* Encadernação rosa */
+.form-panel::before {
+  top: 0;
+  right: auto;
+  left: 5px;
+  width: 18px;
+  height: 100%;
+  border: 0;
+  background:
+    radial-gradient(
+      circle,
+      #ea6993 4px,
+      #fffdf7 4.5px,
+      #fffdf7 6px,
+      transparent 6.5px
+    )
+    center 16px / 18px 38px repeat-y;
+  transform: none;
+}
+
+.form-panel::after {
+  position: absolute;
+  top: 0;
+  left: 32px;
+  width: 1px;
+  height: 100%;
+  background: #e3879270;
+  content: "";
+  pointer-events: none;
+}
+
+/* Tipografia da página */
+.form-heading h1 {
+  font-family: "Bebas Neue", sans-serif;
+  font-size: clamp(36px, 4vw, 48px);
+  font-weight: 400;
+  letter-spacing: 0.5px;
+}
+
+.form-topline,
+.auth-form label,
+.primary-button,
+.form-footer {
+  font-family: "Space Grotesk", sans-serif;
+}
+
+/* Celular */
+@media (max-width: 760px) {
+  .access-layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 26px;
+  }
+
+  .visual-panel {
+    min-height: 320px;
+  }
+
+  .form-panel {
+    padding: 30px 18px 28px 42px;
+    transform: rotate(0.5deg);
+  }
+}
