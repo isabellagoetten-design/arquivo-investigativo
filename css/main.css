@@ -1177,3 +1177,20 @@ input {
     font-size: 18px;
   }
 }
+
+
+/* Título "Entrar": fonte condensada e pesada inspirada na referência */
+@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
+
+.form-heading h1 {
+  font-family: 'Anton', Impact, sans-serif;
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  text-transform: none;
+}
+
+@media (min-width: 761px) {
+  .form-heading h1 {
+    font-size: clamp(34px, 3.6vw, 48px);
+  }
+}
