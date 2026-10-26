@@ -1416,3 +1416,14 @@ input {
   .form-footer { margin-top: 22px !important; padding-top: 13px !important; gap: 9px; font-size: 9px !important; letter-spacing: 1.2px !important; }
   .footer-mark { font-size: 23px !important; }
 }
+
+
+/* Forçar composição vertical em celulares e tablets estreitos */
+@media (max-width: 900px) {
+  .access-layout { display: flex !important; flex-direction: column !important; grid-template-columns: minmax(0, 1fr) !important; gap: 0 !important; min-height: auto !important; background-image: none !important; }
+  .visual-panel { display: block !important; width: 100% !important; min-height: 0 !important; height: auto !important; aspect-ratio: 1.52 / 1 !important; border: 0 !important; border-radius: 0 !important; background: url("../imagem-caderno.png") center / contain no-repeat !important; box-shadow: none !important; }
+  .visual-panel > * { display: none !important; }
+  .form-panel { width: auto !important; max-width: none !important; margin: 0 5px !important; padding: 23px 20px 20px 25px !important; border: 1px solid #dfcbbb !important; border-radius: 8px 16px 9px 12px !important; background: linear-gradient(90deg, transparent 17px, #e3879250 18px, transparent 19px), repeating-linear-gradient(to bottom, transparent 0 37px, #5a86cb16 38px, transparent 39px), #fffaf2 !important; box-shadow: 0 5px 0 #4e0a0b10, 0 12px 28px #4e0a0b0c !important; transform: none !important; }
+  .form-panel::before, .form-panel::after { display: none !important; }
+  .form-panel .auth-form, .form-panel .auth-form input, .form-panel .primary-button { width: 100% !important; max-width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; }
+}
