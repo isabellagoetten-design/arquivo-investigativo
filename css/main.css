@@ -1254,3 +1254,16 @@ input {
     transform: none !important;
   }
 }
+
+
+/* Correção fina: reduzir a rotação e colocar ENTRAR em maiúsculas */
+.form-heading h1 {
+  text-transform: uppercase !important;
+}
+
+@media (min-width: 761px) {
+  .form-panel {
+    transform: rotate(-7deg) !important;
+    transform-origin: 50% 50% !important;
+  }
+}
