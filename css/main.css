@@ -710,80 +710,104 @@ a:focus-visible {
   }
 }
 
-/* NOVA COMPOSIÇÃO: MURAL + CADERNO */
+/* COMPOSIÇÃO REVISADA: MURAL + CADERNO */
 
+/* Evita que regras provisórias antigas deformem os dois lados. */
 .access-layout {
-  grid-template-columns: minmax(0, 1.05fr) minmax(320px, 0.95fr);
-  align-items: stretch;
-  gap: clamp(24px, 4vw, 54px);
-  min-height: 620px;
+  grid-template-columns: minmax(0, 1.08fr) minmax(320px, 0.92fr);
+  align-items: center;
+  gap: clamp(24px, 4vw, 56px);
+  min-height: 600px;
 }
 
-/* Lado esquerdo: mural investigativo */
 .visual-panel {
-  min-height: 590px;
-  border-radius: 8px 22px 6px 15px;
+  min-height: 560px;
+  overflow: hidden;
   border: 2px solid var(--vinho);
-  background-color: #e38792;
-  background-image:
-    repeating-linear-gradient(
-      135deg,
-      #ffffff12 0,
-      #ffffff12 2px,
-      transparent 2px,
-      transparent 12px
-    );
-  box-shadow: 8px 9px 0 #4e0a0b20;
+  border-radius: 5px 18px 6px 12px;
+  background:
+    radial-gradient(circle at 18% 16%, #fffdf7 0 7%, transparent 7.3%),
+    radial-gradient(circle at 86% 80%, #5a86cb 0 9%, transparent 9.3%),
+    radial-gradient(#4e0a0b18 0.7px, transparent 0.7px),
+    #e38792;
+  background-size: auto, auto, 7px 7px, auto;
+  box-shadow: 7px 8px 0 #4e0a0b1c;
 }
 
-/* Lado direito: caderno de investigação */
+.visual-panel::before,
+.visual-panel::after,
+.visual-panel .orbit,
+.visual-panel .shape {
+  display: none;
+}
+
+.illustration-card {
+  width: 190px;
+  height: 225px;
+  border: 1.5px solid var(--vinho);
+  border-radius: 2px;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0 23px, #5a86cb20 24px, transparent 25px),
+    #fffdf7;
+  box-shadow: 7px 8px 0 #4e0a0b24;
+  transform: rotate(-4deg);
+}
+
+.illustration-card::before {
+  background: #f4db9ad9;
+}
+
+.illustration-card img {
+  width: 112px;
+  height: 112px;
+  object-fit: contain;
+  background: transparent;
+}
+
+.mini-note {
+  border: 1.5px solid var(--vinho);
+  border-radius: 1px;
+  box-shadow: 4px 5px 0 #4e0a0b1c;
+}
+
+.note-yellow { background: #f4db9a; }
+.note-pink { background: #fff0ed; }
+
+.decorative-tag {
+  border: 1.5px solid var(--vinho);
+  border-radius: 1px;
+  background: #ea6993;
+  box-shadow: 3px 3px 0 #4e0a0b1c;
+}
+
+/* A área de acesso funciona como página de caderno, sem virar um cartão grosso. */
 .form-panel {
-  padding: 38px 28px 32px 48px;
+  padding: 34px 26px 30px 42px;
   border: 1.5px solid #d8c6b6;
-  border-radius: 4px 14px 5px 8px;
-  background-color: #fffdf7;
-  background-image:
-    linear-gradient(
-      90deg,
-      transparent 29px,
-      #e3879270 30px,
-      transparent 31px
-    ),
-    repeating-linear-gradient(
-      to bottom,
-      transparent 0,
-      transparent 31px,
-      #5a86cb20 32px,
-      transparent 33px
-    );
-  box-shadow: 7px 8px 0 #4e0a0b20;
-  transform: rotate(1deg);
+  border-radius: 3px 12px 4px 7px;
+  background:
+    linear-gradient(90deg, transparent 27px, #e3879270 28px, transparent 29px),
+    repeating-linear-gradient(to bottom, transparent 0 31px, #5a86cb20 32px, transparent 33px),
+    #fffdf7;
+  box-shadow: 5px 6px 0 #4e0a0b18;
+  transform: rotate(0.5deg);
 }
 
-/* Encadernação rosa */
 .form-panel::before {
   top: 0;
   right: auto;
   left: 5px;
-  width: 18px;
+  width: 16px;
   height: 100%;
   border: 0;
-  background:
-    radial-gradient(
-      circle,
-      #ea6993 4px,
-      #fffdf7 4.5px,
-      #fffdf7 6px,
-      transparent 6.5px
-    )
-    center 16px / 18px 38px repeat-y;
+  background: radial-gradient(circle, #ea6993 4px, #fffdf7 4.5px, #fffdf7 6px, transparent 6.5px) center 16px / 16px 38px repeat-y;
   transform: none;
 }
 
 .form-panel::after {
   position: absolute;
   top: 0;
-  left: 32px;
+  left: 29px;
   width: 1px;
   height: 100%;
   background: #e3879270;
@@ -791,10 +815,8 @@ a:focus-visible {
   pointer-events: none;
 }
 
-/* Tipografia da página */
 .form-heading h1 {
   font-family: "Bebas Neue", sans-serif;
-  font-size: clamp(36px, 4vw, 48px);
   font-weight: 400;
   letter-spacing: 0.5px;
 }
@@ -806,71 +828,20 @@ a:focus-visible {
   font-family: "Space Grotesk", sans-serif;
 }
 
-/* Celular */
 @media (max-width: 760px) {
   .access-layout {
     grid-template-columns: minmax(0, 1fr);
-    gap: 26px;
+    gap: 24px;
+    min-height: auto;
   }
 
   .visual-panel {
-    min-height: 320px;
+    min-height: 310px;
+    border-radius: 5px 16px 4px 10px;
   }
 
   .form-panel {
-    padding: 30px 18px 28px 42px;
-    transform: rotate(0.5deg);
+    padding: 28px 18px 26px 40px;
+    transform: none;
   }
-}
-
-/* ARQUIVO INVESTIGATIVO: LIMPEZA DO MURAL */
-
-.visual-panel {
-  overflow: hidden;
-  min-height: 590px;
-  border: 0;
-  border-radius: 4px;
-  background-color: #f4db9a;
-  background-image:
-    radial-gradient(#4e0a0b18 0.7px, transparent 0.7px);
-  background-size: 7px 7px;
-  box-shadow: none;
-}
-
-.visual-panel::before,
-.visual-panel::after,
-.visual-panel .orbit,
-.visual-panel .shape {
-  display: none;
-}
-
-.illustration-card {
-  border: 1px solid #4e0a0b60;
-  background-color: #fffdf7;
-  box-shadow: 5px 6px 0 #4e0a0b20;
-  transform: rotate(-5deg);
-}
-
-.illustration-card img {
-  background: transparent;
-}
-
-.mini-note {
-  border: 1px solid #4e0a0b70;
-  border-radius: 0;
-  box-shadow: 3px 4px 0 #4e0a0b18;
-}
-
-.note-yellow {
-  background-color: #f4db9a;
-}
-
-.note-pink {
-  background-color: #fff0ed;
-}
-
-.decorative-tag {
-  border: 1px solid #4e0a0b;
-  background-color: #ea6993;
-  box-shadow: 3px 3px 0 #4e0a0b20;
 }
