@@ -1328,3 +1328,43 @@ input {
     padding-right: 12px;
   }
 }
+
+
+/* Centralizar o formulário na folha e dar mais respiro aconchegante */
+@media (min-width: 761px) {
+  .form-panel {
+    width: 76% !important;
+    justify-self: center;
+    margin-left: -18px;
+    padding-top: 24px;
+    padding-bottom: 24px;
+    transform: translateX(-8px) rotate(-4deg) !important;
+    transform-origin: 50% 50% !important;
+    gap: 2px;
+  }
+
+  .form-topline {
+    margin-bottom: 22px;
+  }
+
+  .form-heading {
+    margin-bottom: 8px;
+  }
+
+  .form-panel .auth-form {
+    gap: 12px;
+  }
+
+  .form-panel .auth-form input {
+    height: 44px;
+    background: #fffaf2;
+    border-color: #d4bca9;
+    border-radius: 3px;
+  }
+
+  .form-panel .primary-button {
+    min-height: 44px;
+    margin-top: 4px;
+    border-radius: 3px;
+  }
+}
