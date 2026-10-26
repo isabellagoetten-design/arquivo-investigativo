@@ -1018,3 +1018,97 @@ body::before {
     letter-spacing: 1.3px;
   }
 }
+
+
+/* REFINO 2: PERSPECTIVA MAIS FORTE E FUNDO COM PERSONALIDADE */
+body {
+  background:
+    radial-gradient(ellipse at 5% 15%, #f4db9a 0 10%, transparent 31%),
+    radial-gradient(ellipse at 96% 12%, #e38792a6 0 12%, transparent 34%),
+    radial-gradient(ellipse at 94% 88%, #5a86cb70 0 10%, transparent 30%),
+    radial-gradient(ellipse at 8% 92%, #9dad7180 0 9%, transparent 28%),
+    #f8f0e3;
+}
+
+body::before {
+  background-image:
+    radial-gradient(#4e0a0b22 1px, transparent 1.3px),
+    repeating-linear-gradient(0deg, transparent 0 30px, #4e0a0b0b 31px, transparent 32px);
+  background-size: 11px 11px, 100% 32px;
+  opacity: 0.65;
+  mask-image: none;
+}
+
+body::after {
+  position: fixed;
+  z-index: 0;
+  inset: 0;
+  content: "✳";
+  display: block;
+  color: #4e0a0b;
+  font-size: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle, #ea6993 0 5px, transparent 6px) 4% 36% / 22px 22px no-repeat,
+    radial-gradient(circle, #5a86cb 0 6px, transparent 7px) 96% 54% / 24px 24px no-repeat,
+    radial-gradient(circle, #f4db9a 0 7px, transparent 8px) 94% 30% / 28px 28px no-repeat,
+    radial-gradient(circle, #9dad71 0 5px, transparent 6px) 7% 70% / 22px 22px no-repeat;
+  opacity: 0.95;
+}
+
+@media (min-width: 761px) {
+  .form-panel {
+    transform: rotate(-6.5deg);
+    transform-origin: 48% 48%;
+    padding-right: 6%;
+    padding-left: 10%;
+  }
+
+  .form-topline {
+    font-size: 13px;
+    letter-spacing: 2.4px;
+  }
+
+  .form-heading h1 {
+    font-size: clamp(42px, 4.1vw, 58px);
+  }
+
+  .form-heading p {
+    font-size: 18px;
+    line-height: 1.6;
+  }
+
+  .form-footer {
+    margin-top: 32px;
+    padding-top: 19px;
+    font-size: 14px;
+    letter-spacing: 2px;
+  }
+
+  .footer-mark {
+    font-size: 24px;
+  }
+
+  .brand {
+    font-size: 23px;
+  }
+}
+
+@media (max-width: 760px) {
+  body {
+    background:
+      radial-gradient(ellipse at 0% 8%, #f4db9a 0 9%, transparent 28%),
+      radial-gradient(ellipse at 100% 30%, #e3879275 0 10%, transparent 32%),
+      radial-gradient(ellipse at 0% 95%, #9dad7170 0 9%, transparent 28%),
+      #f8f0e3;
+  }
+
+  .form-footer {
+    font-size: 13px;
+    letter-spacing: 1.6px;
+  }
+
+  .footer-mark {
+    font-size: 22px;
+  }
+}
