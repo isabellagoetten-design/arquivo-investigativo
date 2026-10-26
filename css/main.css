@@ -1280,3 +1280,27 @@ input {
     text-transform: uppercase !important;
   }
 }
+
+
+/* Ajuste fino de perspectiva e largura dos campos */
+@media (min-width: 761px) {
+  .form-panel {
+    width: 90%;
+    justify-self: center;
+    transform: rotate(-4deg) !important;
+    transform-origin: 50% 50% !important;
+  }
+
+  .form-panel .auth-form,
+  .form-panel #account-state,
+  .form-panel #auth-forms {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .form-panel .auth-form input,
+  .form-panel .primary-button {
+    max-width: 100%;
+    min-width: 0;
+  }
+}
