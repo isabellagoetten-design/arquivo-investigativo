@@ -1368,3 +1368,51 @@ input {
     border-radius: 3px;
   }
 }
+
+
+/* Ajustes de composição para telas pequenas */
+@media (max-width: 760px) {
+  .access-page { padding: 14px 16px 26px !important; }
+  .brand-header { margin-bottom: 12px !important; }
+  .brand { font-size: 15px !important; gap: 9px; }
+  .brand-icon { width: 36px !important; height: 36px !important; }
+  .access-layout { gap: 10px !important; }
+  .visual-panel {
+    width: 100% !important;
+    aspect-ratio: 1.52 / 1 !important;
+    background-position: center top !important;
+    background-size: contain !important;
+  }
+  .form-panel {
+    margin: -4px 5px 0 !important;
+    padding: 23px 20px 20px 25px !important;
+    border: 1px solid #dfcbbb !important;
+    border-radius: 8px 16px 9px 12px !important;
+    background:
+      linear-gradient(90deg, transparent 17px, #e3879250 18px, transparent 19px),
+      repeating-linear-gradient(to bottom, transparent 0 37px, #5a86cb16 38px, transparent 39px),
+      #fffaf2 !important;
+    box-shadow: 0 5px 0 #4e0a0b10, 0 12px 28px #4e0a0b0c !important;
+    transform: none !important;
+  }
+  .form-panel::before, .form-panel::after { display: none !important; }
+  .form-topline { margin-bottom: 13px !important; font-size: 11px; letter-spacing: 2px; }
+  .form-heading { margin-bottom: 18px !important; }
+  .form-heading h1 { font-size: 36px !important; line-height: 1 !important; margin-bottom: 7px !important; }
+  .form-heading p { margin-top: 5px !important; font-size: 15px !important; }
+  .auth-form { gap: 9px !important; }
+  .auth-form label { font-size: 14px !important; }
+  .auth-form input {
+    width: 100% !important; height: 46px !important; padding: 0 12px !important;
+    font-size: 14px !important; border-radius: 4px !important; box-sizing: border-box !important;
+  }
+  .label-row { margin-top: 4px !important; gap: 8px; }
+  .text-button { font-size: 13px !important; }
+  .primary-button {
+    width: 100% !important; min-height: 48px !important; margin-top: 8px !important;
+    padding: 12px 15px !important; font-size: 16px !important; border-radius: 5px !important;
+  }
+  .switch-prompt { margin-top: 12px !important; font-size: 13px !important; line-height: 1.6; }
+  .form-footer { margin-top: 22px !important; padding-top: 13px !important; gap: 9px; font-size: 9px !important; letter-spacing: 1.2px !important; }
+  .footer-mark { font-size: 23px !important; }
+}
