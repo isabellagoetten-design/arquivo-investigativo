@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Anton&family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap');
+
 :root {
   font-family: Arial, Helvetica, sans-serif;
   color: #4e0a0b;
@@ -1115,8 +1117,6 @@ body::after {
 
 
 /* NOVA TIPOGRAFIA: editorial + arquivo contemporâneo */
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap');
-
 :root {
   font-family: 'DM Sans', sans-serif;
 }
@@ -1180,8 +1180,6 @@ input {
 
 
 /* Título "Entrar": fonte condensada e pesada inspirada na referência */
-@import url('https://fonts.googleapis.com/css2?family=Anton&display=swap');
-
 .form-heading h1 {
   font-family: 'Anton', Impact, sans-serif;
   font-weight: 400;
@@ -1201,5 +1199,34 @@ input {
   .form-panel {
     transform: rotate(-10deg);
     transform-origin: 48% 48%;
+  }
+}
+
+
+/* AJUSTE REAL: fonte carregada, inclinação forte e símbolo ampliado */
+.form-heading h1 {
+  font-family: 'Anton', Impact, sans-serif !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.2px !important;
+}
+
+@media (min-width: 761px) {
+  .form-panel {
+    transform: rotate(-14deg) !important;
+    transform-origin: 48% 48%;
+  }
+  .footer-mark {
+    font-size: 30px !important;
+    line-height: 1;
+  }
+}
+
+@media (max-width: 760px) {
+  .form-panel {
+    transform: none !important;
+  }
+  .footer-mark {
+    font-size: 25px !important;
+    line-height: 1;
   }
 }
