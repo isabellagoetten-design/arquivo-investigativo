@@ -1420,10 +1420,10 @@ input {
 
 /* Forçar composição vertical em celulares e tablets estreitos */
 @media (max-width: 900px) {
-  .access-layout { display: flex !important; flex-direction: column !important; grid-template-columns: minmax(0, 1fr) !important; gap: 0 !important; min-height: auto !important; background-image: none !important; }
-  .visual-panel { display: block !important; width: 100% !important; min-height: 0 !important; height: auto !important; aspect-ratio: 0.72 / 1 !important; border: 0 !important; border-radius: 0 !important; background: url("../entrada-mobile.png?v=2") center / contain no-repeat !important; box-shadow: none !important; }
+  .access-layout { display: flex !important; flex-direction: column !important; gap: 0 !important; min-height: auto !important; background-image: none !important; }
+  .visual-panel { display: block !important; position: relative !important; z-index: 1 !important; width: 100% !important; min-height: 0 !important; height: auto !important; aspect-ratio: 0.92 / 1 !important; margin-top: 24px !important; margin-bottom: -205px !important; border: 0 !important; border-radius: 0 !important; background: url("../entrada-mobile.png?v=3") center 24% / contain no-repeat !important; box-shadow: none !important; }
   .visual-panel > * { display: none !important; }
-  .form-panel { width: auto !important; max-width: none !important; margin: 0 5px !important; padding: 23px 20px 20px 25px !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; transform: none !important; }
+  .form-panel { position: relative !important; z-index: 2 !important; align-self: center !important; width: min(100%, 440px) !important; max-width: none !important; margin: 0 auto !important; padding: 0 20px 20px 25px !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; transform: translateY(-18px) !important; }
   .form-panel::before, .form-panel::after { display: none !important; }
   .form-panel .auth-form, .form-panel .auth-form input, .form-panel .primary-button { width: 100% !important; max-width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; }
 }
