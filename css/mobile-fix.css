@@ -1,0 +1,16 @@
+/* Ajustes compactos do formulário em telas pequenas */
+@media (max-width: 900px) {
+  .form-heading h1 { font-size: 27px !important; line-height: 1.05 !important; margin-bottom: 5px !important; }
+  .form-heading p { font-size: 12px !important; line-height: 1.35 !important; margin-top: 4px !important; }
+  .form-topline { margin-bottom: 8px !important; }
+  .form-heading { margin-bottom: 10px !important; }
+  .auth-form { gap: 6px !important; }
+  .auth-form label { font-size: 12px !important; }
+  .auth-form input { height: 38px !important; padding: 0 10px !important; font-size: 13px !important; }
+  .label-row { margin-top: 2px !important; }
+  .text-button { font-size: 11px !important; }
+  .primary-button { min-height: 39px !important; padding: 8px 12px !important; margin-top: 5px !important; font-size: 13px !important; }
+  .switch-prompt { margin-top: 8px !important; font-size: 11px !important; line-height: 1.35 !important; }
+  .form-panel { padding-bottom: 8px !important; }
+  .form-footer { margin-top: 10px !important; padding-top: 8px !important; }
+}
