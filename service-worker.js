@@ -1,9 +1,10 @@
-const CACHE_NAME = "arquivo-investigativo-v2";
+const CACHE_NAME = "arquivo-investigativo-v3";
 
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
   "./css/main.css",
+  "./entrada-mobile.png",
   "./js/main.js",
   "./manifest.webmanifest",
   "./icons/icon-192.png",
