@@ -1421,7 +1421,7 @@ input {
 /* Forçar composição vertical em celulares e tablets estreitos */
 @media (max-width: 900px) {
   .access-layout { display: flex !important; flex-direction: column !important; gap: 0 !important; min-height: auto !important; background-image: none !important; }
-  .visual-panel { display: block !important; position: relative !important; z-index: 1 !important; width: 100% !important; min-height: 0 !important; height: auto !important; aspect-ratio: 0.92 / 1 !important; margin-top: 38px !important; margin-bottom: -320px !important; border: 0 !important; border-radius: 0 !important; background: url("../entrada-mobile.png?v=4") center 32% / contain no-repeat !important; box-shadow: none !important; }
+  .visual-panel { display: block !important; position: relative !important; z-index: 1 !important; width: 100% !important; min-height: 0 !important; height: auto !important; aspect-ratio: 0.92 / 1 !important; margin-top: 38px !important; margin-bottom: -320px !important; border: 0 !important; border-radius: 0 !important; background: url("../entrada-mobile.png?v=5") center 32% / contain no-repeat !important; box-shadow: none !important; }
   .visual-panel > * { display: none !important; }
   .form-panel { position: relative !important; z-index: 2 !important; align-self: center !important; width: min(100%, 440px) !important; max-width: none !important; margin: 0 auto !important; padding: 0 20px 20px 25px !important; border: 0 !important; border-radius: 0 !important; background: transparent !important; box-shadow: none !important; transform: translateY(-42px) !important; }
   .form-panel::before, .form-panel::after { display: none !important; }
