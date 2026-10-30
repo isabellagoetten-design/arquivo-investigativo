@@ -78,6 +78,34 @@ $("concept-form").addEventListener("submit",async event=>{
  form.reset();$("concept-status").textContent="Conceito adicionado ao Atlas.";
  await loadAtlas();
 });
+const importForm=$("knowledge-import-form");
+importForm.addEventListener("submit",async event=>{
+ event.preventDefault();
+ const query=importForm.elements.query.value.trim();
+ const box=$("knowledge-import-results");
+ $("knowledge-import-status").textContent="Consultando a memória compartilhada...";
+ box.innerHTML="";
+ const {data,error}=await db.from("knowledge_records").select("id,label,description,payload,wikidata_url,wikipedia_url").ilike("label","%"+query.replace(/[%_]/g,"\\\\function updateSelection(){")+"%").order("label").limit(12);
+ if(error){$("knowledge-import-status").textContent="Não foi possível consultar: "+error.message;return;}
+ if(!data?.length){$("knowledge-import-status").textContent="Nenhum registro salvo corresponde a essa busca. Pesquise primeiro na página Conhecimento.";return;}
+ box.innerHTML=data.map(item=>'<article class="knowledge-import-card"><div><strong>'+esc(item.label)+'</strong><p>'+esc(item.description||item.payload?.summary||"Registro da base compartilhada")+'</p></div><button type="button" data-import-knowledge="'+esc(item.id)+'">Adicionar ao Atlas ＋</button><a href="'+esc(item.wikipedia_url||item.wikidata_url)+'" target="_blank" rel="noopener noreferrer">Fonte ↗</a></article>').join("");
+ $("knowledge-import-status").textContent=data.length+" registros encontrados.";
+});
+$("knowledge-import-results").addEventListener("click",async event=>{
+ const button=event.target.closest("[data-import-knowledge]");
+ if(!button)return;
+ const id=button.dataset.importKnowledge;
+ const {data,error}=await db.from("knowledge_records").select("id,label,description,payload").eq("id",id).maybeSingle();
+ if(error||!data){$("knowledge-import-status").textContent="Registro não encontrado.";return;}
+ const exists=topics.some(topic=>topic.title.toLocaleLowerCase("pt-BR")===data.label.toLocaleLowerCase("pt-BR"));
+ if(exists){$("knowledge-import-status").textContent="Esse conceito já existe no seu Atlas.";return;}
+ const description=[data.description,data.payload?.summary].filter(Boolean).join("\\n\\n").slice(0,5000);
+ const saved=await db.from("topics").insert({user_id:user.id,title:data.label,content:description,color:"#9DAD71",position:{x:0,y:0}});
+ if(saved.error){$("knowledge-import-status").textContent="Erro ao adicionar: "+saved.error.message;return;}
+ button.disabled=true;button.textContent="Adicionado ✓";
+ $("knowledge-import-status").textContent="Conceito importado para seu Atlas.";
+ await loadAtlas();
+});
 function updateSelection(){
  const map=$("atlas-map"),connected=new Set();
  links.forEach(link=>{
