@@ -124,3 +124,62 @@ A função retorna:
 - `confidence`: nível de confiança indicado pelo modelo.
 
 **Segurança editorial:** a função retorna `proposals_only: true`, `requires_human_review: true` e `persisted: false`. Não grava automaticamente tópicos, conexões, perfis ou eventos. A interface deve permitir revisar, editar e aceitar cada proposta antes de persistir.
+
+
+## 6. Aprovação e persistência das propostas
+
+**RPC:** `public.accept_research_proposals`
+
+A pesquisa estruturada não é gravada automaticamente. Depois da revisão do usuário, a interface envia somente as propostas aceitas:
+
+```js
+const { data, error } = await supabase.rpc("accept_research_proposals", {
+  p_investigation_id: currentInvestigationId,
+  p_citations: acceptedResearch.citations,
+  p_entities: acceptedEntities,
+  p_events: acceptedEvents,
+  p_relationships: acceptedRelationships
+});
+```
+
+A operação é transacional. Ela:
+
+1. Confirma que a investigação pertence ao usuário autenticado.
+2. Salva ou reutiliza fontes da mesma investigação.
+3. Cria entidades aprovadas em `topics`, com tipo e confiança.
+4. Cria acontecimentos aprovados em `timeline_events`, preservando datas parciais sem inventar dia ou mês.
+5. Cria relações entre entidades aprovadas em `connections`.
+6. Registra a origem de cada proposta em `research_evidence_links`, associando fonte e número de referência à entidade, evento ou conexão.
+
+### Resposta
+
+```json
+{
+  "persisted": true,
+  "investigation_id": "uuid",
+  "saved_sources": 3,
+  "saved_entities": 5,
+  "saved_events": 4,
+  "saved_relationships": 2,
+  "saved_evidence_links": 11
+}
+```
+
+### Segurança e integridade
+
+- A RPC exige usuário autenticado e verifica a propriedade da investigação.
+- A execução foi revogada para `anon` e concedida a `authenticated`.
+- `research_evidence_links` tem RLS e só aceita fonte e destino da mesma investigação e do mesmo usuário.
+- Eventos da linha do tempo também validam a propriedade da investigação.
+- Os registros de evidência são imutáveis pela API comum; podem ser removidos pelo proprietário.
+- A operação não aceita relações cujas duas entidades não tenham sido aprovadas no mesmo lote.
+
+### Estado desta etapa
+
+- Migrações de persistência e segurança: aplicadas.
+- Verificação de privilégios: autenticado pode executar; anônimo não pode.
+- RLS de evidências: habilitada.
+- Integração da RPC na interface: pendente.
+- Teste ponta a ponta com uma sessão real: pendente.
+
+A interface deve mostrar uma prévia editável e pedir confirmação antes de chamar a RPC. Nunca enviar todas as propostas automaticamente.
