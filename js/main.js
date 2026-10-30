@@ -51,6 +51,8 @@ async function atualizarTela() {
   const usuario = data.session?.user;
 
   if (usuario) {
+    window.location.replace("./inicio.html");
+    return;
     authForms.hidden = true;
     accountState.hidden = false;
     estado.textContent = "Você está conectada: " + usuario.email;
@@ -185,6 +187,8 @@ cliente.auth.onAuthStateChange((evento, sessao) => {
   if (evento === "INITIAL_SESSION") return;
 
   if (sessao?.user) {
+    window.location.replace("./inicio.html");
+    return;
     authForms.hidden = true;
     accountState.hidden = false;
     estado.textContent = "Você está conectada: " + sessao.user.email;
