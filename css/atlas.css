@@ -12,3 +12,15 @@
 .atlas-node:before{color:var(--node-color)}
 .atlas-node h3{font-size:19px;overflow-wrap:anywhere}
 @media(max-width:650px){.atlas-map{min-height:640px;aspect-ratio:auto}.atlas-node{width:clamp(126px,39vw,155px);padding:12px 10px;min-height:105px}.atlas-node h3{font-size:16px}.atlas-lines line{stroke-width:4;stroke-dasharray:6 7}}
+
+/* INTERAÇÃO DO MAPA */
+.atlas-node{cursor:pointer;transition:opacity .18s ease,box-shadow .18s ease,filter .18s ease,transform .18s ease}
+.atlas-node:focus-visible{outline:3px solid #3D5D91;outline-offset:4px}
+.atlas-node.is-selected{z-index:4;box-shadow:0 0 0 3px #4e0a0b,7px 9px 0 #4e0a0b28;filter:saturate(1.12);transform:translate(-50%,-50%) rotate(0) scale(1.06)}
+.atlas-node.is-related{z-index:3;box-shadow:0 0 0 2px #9DAD71,5px 6px 0 #4e0a0b18}
+.atlas-node.is-muted{opacity:.28;filter:grayscale(.65)}
+.atlas-lines line{transition:opacity .2s ease,stroke-width .2s ease}
+.atlas-lines line:not(.is-active){opacity:.35}
+.atlas-lines line.is-active{stroke:#4e0a0b;stroke-width:6;stroke-dasharray:none;opacity:1}
+#atlas-message{min-height:18px;margin-top:12px;color:#765b4e;font-size:12px}
+@media(prefers-reduced-motion:reduce){.atlas-node,.atlas-lines line{transition:none}}
