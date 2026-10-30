@@ -1,15 +1,16 @@
 <!DOCTYPE html>
 <html lang="pt-BR"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#4E0A0B"><meta name="description" content="Mapa de conexões entre seus conceitos."><title>Atlas | Arquivo Investigativo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="./css/main.css?v=28"><link rel="stylesheet" href="./css/atlas.css?v=3"><link rel="manifest" href="./manifest.webmanifest"></head>
+<link rel="stylesheet" href="./css/main.css?v=28"><link rel="stylesheet" href="./css/atlas.css?v=4"><link rel="manifest" href="./manifest.webmanifest"></head>
 <body class="atlas-page"><main class="atlas-shell">
 <header class="atlas-header"><a href="./inicio.html">← Meu Arquivo</a><span>ARQUIVO INVESTIGATIVO · MAPA DE CONEXÕES</span></header>
 <section class="atlas-intro"><div><p class="eyebrow">CONHECIMENTO EM REDE</p><h1>Atlas<span>.</span></h1><p>Visualize seus conceitos e construa pontes entre assuntos que se relacionam.</p></div><div class="atlas-seal">✳<small>MAPA<br>DE IDEIAS</small></div></section>
 <section class="atlas-stats"><div><strong id="atlas-concept-count">0</strong><span>conceitos</span></div><div><strong id="atlas-link-count">0</strong><span>conexões</span></div><a href="./laboratorio.html">＋ Criar conceito no Laboratório</a></section>
+<section class="atlas-create"><div class="connect-heading"><div><p class="eyebrow">ADICIONAR AO ATLAS</p><h2>Novo conceito</h2></div><span>00 / IDEIAS</span></div><form id="concept-form"><label>Nome do conceito<input name="title" type="text" maxlength="90" placeholder="Ex.: Sociologia" required></label><label>Descrição breve<textarea name="content" rows="2" maxlength="500" placeholder="Escreva uma definição ou observação (opcional)"></textarea></label><button type="submit">＋ Adicionar conceito</button></form><p id="concept-status" role="status"></p></section>
 <section class="atlas-connect"><div class="connect-heading"><div><p class="eyebrow">CRIAR UMA PONTE</p><h2>O que se conecta?</h2></div><span>01 / RELAÇÕES</span></div>
 <form id="link-form"><label>Conceito de origem<select name="from" required><option value="">Escolha um conceito</option></select></label><span class="connect-symbol">↔</span><label>Conceito relacionado<select name="to" required><option value="">Escolha outro conceito</option></select></label><button type="submit">Conectar ↗</button></form><p id="atlas-status" role="status"></p></section>
 <section class="atlas-map-heading"><div><p class="eyebrow">SEU UNIVERSO DE IDEIAS</p><h2>Mapa de conceitos</h2></div><p>As linhas representam conexões criadas por você.</p></section>
 <section id="atlas-map" class="atlas-map" aria-live="polite"><div class="atlas-empty">Carregando seu Atlas...</div></section>
 <section class="atlas-relations"><div class="atlas-map-heading"><div><p class="eyebrow">CAMINHOS ENTRE ASSUNTOS</p><h2>Conexões registradas</h2></div></div><div id="atlas-relations-list"></div></section>
 <p id="atlas-message" class="atlas-message" role="status"></p></main>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./js/atlas.js?v=3"></script></body></html>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./js/atlas.js?v=4"></script></body></html>
