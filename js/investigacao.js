@@ -99,7 +99,16 @@ $("#pdf-assign-form").addEventListener("submit",async event=>{
  status.textContent="PDF vinculado à investigação.";await loadPdfDocuments();
 });
 
-let latestResearch=null,latestStructure=null;
+let latestResearch=null,latestStructure=null,knownEntityProfiles=[];
+function proposalNameKey(value){return String(value??"").trim().toLocaleLowerCase("pt-BR");}
+function renderEntityProposal(item,index){
+ const key=proposalNameKey(item.name);
+ const matches=knownEntityProfiles.filter(profile=>[profile.canonical_name,...(profile.aliases||[])].some(alias=>proposalNameKey(alias)===key));
+ const options=matches.map(profile=>'<option value="'+safeText(profile.id)+'">'+safeText(profile.canonical_name)+' · '+safeText(profile.entity_type)+' · '+safeText((profile.summary||"sem resumo").slice(0,65))+'</option>').join("");
+ const evidenceRefs=(item.evidence_refs||[]).map(n=>"["+n+"]").join(" ")||"não indicadas";
+ return '<article class="proposal-entity-card"><label class="proposal-item"><input type="checkbox" data-proposal-type="entity" data-proposal-index="'+index+'"><span><strong>'+safeText(item.name)+'</strong><small>'+safeText(item.entity_type+" · "+(item.description||"Sem descrição"))+'</small><small class="proposal-meta">Confiança: '+safeText(item.confidence||"low")+' · Evidências: '+safeText(evidenceRefs)+'</small></span></label><div class="proposal-profile-match"><label for="proposal-profile-'+index+'">Vincular a perfil mestre existente (opcional)</label><select id="proposal-profile-'+index+'" data-profile-proposal-index="'+index+'"><option value="">Manter como registro separado</option>'+options+'</select><small>'+(matches.length?matches.length+" correspondência(s) exata(s) por nome ou alias. Confirme a identidade antes de vincular.":"Nenhuma correspondência exata encontrada. Você poderá associar depois em Entidades.")+'</small></div></article>';
+}
+
 const researchForm=$("#research-form");
 function renderResearchCitations(citations){
  const list=$("#research-citations");
@@ -134,10 +143,12 @@ $("#structure-research")?.addEventListener("click",async()=>{
  button.disabled=false;
  if(error||!data?.proposals_only){$("#structure-status").textContent="Não foi possível estruturar a pesquisa: "+(data?.error||error?.message||"resposta inválida");return;}
  latestStructure=data;
+ const profileResult=await client.from("entity_profiles").select("id,entity_type,canonical_name,aliases,summary").eq("user_id",uid).order("canonical_name");
+ knownEntityProfiles=profileResult.data||[];
  const entities=data.entities||[],events=data.events||[],relations=data.relationships||[];
  const refs=item=>(item.evidence_refs||[]).map(n=>"["+n+"]").join(" ");
  const card=(type,item,index,title,description)=>'<label class="proposal-item"><input type="checkbox" data-proposal-type="'+type+'" data-proposal-index="'+index+'"><span><strong>'+safeText(title)+'</strong><small>'+safeText(description||"Sem descrição")+'</small><small class="proposal-meta">Confiança: '+safeText(item.confidence||"low")+' · Evidências: '+safeText(refs(item)||"não indicadas")+'</small></span></label>';
- $("#proposal-entities").innerHTML=entities.length?entities.map((x,i)=>card("entity",x,i,x.name,x.entity_type+" · "+x.description)).join(""):'<p class="record-empty">Nenhuma entidade identificada.</p>';
+ $("#proposal-entities").innerHTML=entities.length?entities.map((x,i)=>renderEntityProposal(x,i)).join(""):'<p class="record-empty">Nenhuma entidade identificada.</p>';
  $("#proposal-events").innerHTML=events.length?events.map((x,i)=>card("event",x,i,x.title,(x.date||"Data não determinada")+" · "+x.description)).join(""):'<p class="record-empty">Nenhum acontecimento identificado.</p>';
  $("#proposal-relations").innerHTML=relations.length?relations.map((x,i)=>card("relationship",x,i,x.source_entity+" — "+x.relation+" → "+x.target_entity,"Relação proposta entre entidades")).join(""):'<p class="record-empty">Nenhuma relação identificada.</p>';
  $("#proposal-questions").textContent=(data.open_questions||[]).length?(data.open_questions||[]).map(q=>"• "+q).join("\n"):"Nenhuma questão em aberto retornada.";
@@ -150,6 +161,7 @@ $("#save-proposals")?.addEventListener("click",async()=>{
  const entities=selected("entity"),events=selected("event"),acceptedNames=new Set(entities.map(x=>String(x.name).toLocaleLowerCase("pt-BR")));
  const relationships=selected("relationship").filter(x=>acceptedNames.has(String(x.source_entity).toLocaleLowerCase("pt-BR"))&&acceptedNames.has(String(x.target_entity).toLocaleLowerCase("pt-BR")));
  if(!entities.length&&!events.length&&!relationships.length){$("#structure-status").textContent="Marque ao menos uma proposta para salvar.";return;}
+ const profileSelections=[...$("#structure-output").querySelectorAll("[data-profile-proposal-index]")].map(select=>({index:Number(select.dataset.profileProposalIndex),profileId:select.value})).filter(item=>item.profileId);
  const button=$("#save-proposals");button.disabled=true;$("#structure-status").textContent="Salvando propostas aprovadas...";
  const {data,error}=await client.rpc("accept_research_proposals",{
   p_investigation_id:id,p_citations:latestResearch.citations||[],
@@ -157,7 +169,15 @@ $("#save-proposals")?.addEventListener("click",async()=>{
  });
  button.disabled=false;
  if(error){$("#structure-status").textContent="Não foi possível salvar: "+error.message;return;}
- $("#structure-status").textContent="Salvo: "+data.saved_entities+" entidade(s), "+data.saved_events+" acontecimento(s), "+data.saved_relationships+" relação(ões) e "+data.saved_evidence_links+" vínculo(s) de evidência.";
+ const topicMap=data.saved_entity_topic_map||{};let linkedProfiles=0,linkFailures=0;
+ for(const selection of profileSelections){
+  const proposal=entities[selection.index];if(!proposal)continue;
+  const topicId=topicMap[proposalNameKey(proposal.name)];if(!topicId)continue;
+  const linked=await client.from("topics").update({entity_profile_id:selection.profileId}).eq("id",topicId).eq("user_id",uid).eq("investigation_id",id).select("id").maybeSingle();
+  if(linked.error||!linked.data)linkFailures++;else linkedProfiles++;
+ }
+ const summary="Salvo: "+data.saved_entities+" entidade(s), "+data.saved_events+" acontecimento(s), "+data.saved_relationships+" relação(ões) e "+data.saved_evidence_links+" vínculo(s) de evidência.";
+ $("#structure-status").textContent=summary+(linkedProfiles?" "+linkedProfiles+" entidade(s) vinculada(s) a perfis mestres.":"")+(linkFailures?" Atenção: "+linkFailures+" vínculo(s) com perfis não foram concluídos; revise em Entidades.":"");
  await loadRecords();
 });
 
