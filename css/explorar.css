@@ -8,3 +8,5 @@
 .result-actions button[data-create-case]{padding:8px 11px;border:1px solid #e3c9bd;background:#f7ece6;border-radius:7px}.result-actions button:disabled{opacity:.55;cursor:wait}
 
 .result-actions button[data-copy-citation]{padding:8px 11px;border:1px solid #d8cdbd;background:#fffdf7;border-radius:7px}.result-actions button[data-copy-citation]:hover{background:#f1e9dd}
+
+.results-controls{display:flex;align-items:center;gap:14px;font-size:11px;color:#8a655c}.results-controls label{display:flex;align-items:center;gap:7px}.results-controls select{padding:8px 10px;border:1px solid #d9cdbd;background:#fffdf7;color:#4e0a0b;border-radius:6px;font:inherit}.result-actions button[data-copy-citation]{padding:8px 11px;border:1px solid #d8cdbd;background:#fffdf7;border-radius:7px}.result-actions button[data-copy-citation]:hover{background:#f1e9dd}
