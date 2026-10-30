@@ -286,3 +286,16 @@ A ausência de informação em uma fonte não é tratada automaticamente como co
 - Teste transacional da RPC: mapa de IDs retornado e associação do tópico ao perfil mestre aprovados; transação revertida.
 - Verificação de permissões e RLS: aprovada; acesso anônimo negado.
 - Teste ponta a ponta no navegador: pendente.
+
+## 9. Histórico persistente da auditoria de evidências
+
+**Tabelas:** `evidence_audit_runs`, `evidence_audit_findings` e `evidence_audit_finding_evidence`.
+
+- Cada execução salva guarda a síntese, quantidade de vínculos/fontes e data da auditoria.
+- Somente os apontamentos marcados pelo usuário são persistidos; uma execução sem seleção não cria histórico.
+- Cada apontamento mantém tipo, severidade, explicação, próxima verificação e referências aos vínculos originais de evidência.
+- Chaves estrangeiras compostas impedem associar um apontamento a evidências de outro usuário ou de outra investigação.
+- A RPC `public.save_evidence_audit_findings` valida a propriedade da investigação e de cada evidência e grava execução, apontamentos e referências em uma única transação. É `SECURITY INVOKER`, exige sessão autenticada e não está disponível para `anon`.
+- Todo apontamento começa como `needs_review`. O pesquisador pode alterar para `confirmed_by_researcher` (corroborado após revisão) ou `dismissed` (descartado). Esses estados registram a avaliação humana; não representam certificação automática da verdade.
+- RLS protege as três tabelas por proprietário. A exclusão da investigação remove seu histórico em cascata.
+- O histórico é exibido no painel do dossiê, com fontes e resumos vinculados.
