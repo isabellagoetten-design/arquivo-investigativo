@@ -2,7 +2,21 @@ const SUPABASE_URL="https://hoqbkpjwlmkmdvuzinyi.supabase.co",SUPABASE_KEY="sb_p
 function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));}
 function setStatus(t){$("search-status").textContent=t;}
 function card(source,title,description,url,meta=""){return {source,title,description,url,meta};}
-function render(items){window.currentSearchResults=items;const order=$("results-order")?.value||"relevance";const visible=[...items];if(order==="newest")visible.sort((a,b)=>(Number(b.year)||0)-(Number(a.year)||0));if(order==="oldest")visible.sort((a,b)=>(Number(a.year)||9999)-(Number(b.year)||9999));if(order==="title")visible.sort((a,b)=>a.title.localeCompare(b.title,"pt-BR"));$("result-count").textContent=visible.length+" resultados";$("results").innerHTML=visible.length?visible.map((x,i)=>'<article class="result-card"><span class="result-source">'+esc(x.source)+'</span><h3>'+esc(x.title)+'</h3><p>'+esc(x.description||"Sem resumo disponível.")+'</p><span class="result-meta">'+esc(x.meta||"")+(x.year? " · "+esc(x.year):"")+'</span><div class="result-actions"><a href="'+esc(x.url)+'" target="_blank" rel="noopener noreferrer">Abrir fonte original ↗</a>'+(x.citation?'<button type="button" data-copy-citation="'+i+'">Copiar referência</button>':"")+'<button type="button" data-save="'+i+'">＋ Salvar na Biblioteca</button><button type="button" data-create-case="'+i+'">Criar dossiê com esta fonte ↗</button></div></article>').join(""):'<div class="archive-empty">Nenhum resultado encontrado nesta fonte. Tente outro termo ou use a busca ampla na web.</div>';window.renderedSearchResults=visible;}
+function safeExternalUrl(value){try{const url=new URL(String(value||""));return ["http:","https:"].includes(url.protocol)?url.href:null;}catch{return null;}}
+function render(items){
+ window.currentSearchResults=items;
+ const order=$("results-order")?.value||"relevance";
+ const visible=[...items];
+ if(order==="newest")visible.sort((a,b)=>(Number(b.year)||0)-(Number(a.year)||0));
+ if(order==="oldest")visible.sort((a,b)=>(Number(a.year)||9999)-(Number(b.year)||9999));
+ if(order==="title")visible.sort((a,b)=>a.title.localeCompare(b.title,"pt-BR"));
+ $("result-count").textContent=visible.length+" resultados";
+ $("results").innerHTML=visible.length?visible.map((x,i)=>{
+  const sourceUrl=safeExternalUrl(x.url);
+  return '<article class="result-card"><span class="result-source">'+esc(x.source)+'</span><h3>'+esc(x.title)+'</h3><p>'+esc(x.description||"Sem resumo disponível.")+'</p><span class="result-meta">'+esc(x.meta||"")+(x.year?" · "+esc(x.year):"")+'</span><div class="result-actions">'+(sourceUrl?'<a href="'+esc(sourceUrl)+'" target="_blank" rel="noopener noreferrer">Abrir fonte original ↗</a>':'<span class="result-no-link">Fonte sem endereço válido</span>')+(x.citation?'<button type="button" data-copy-citation="'+i+'">Copiar referência</button>':"")+'<button type="button" data-save="'+i+'">＋ Salvar na Biblioteca</button><button type="button" data-create-case="'+i+'">Criar dossiê com esta fonte ↗</button></div></article>';
+ }).join(""):'<div class="archive-empty">Nenhum resultado encontrado nesta fonte. Tente outro termo ou use a busca ampla na web.</div>';
+ window.renderedSearchResults=visible;
+}
 async function searchGeneral(q){const url="https://pt.wikipedia.org/w/api.php?action=query&generator=search&gsrsearch="+encodeURIComponent(q)+"&gsrlimit=12&prop=pageimages|extracts&exintro=1&explaintext=1&exsentences=3&piprop=thumbnail&pithumbsize=500&format=json&origin=*";const res=await fetch(url);if(!res.ok)throw Error("A fonte de conhecimento não respondeu.");const data=await res.json();return Object.values(data.query?.pages||{}).map(p=>card("WIKIPÉDIA · CONTEXTO GERAL",p.title,p.extract||"Consulte a página para mais informações.","https://pt.wikipedia.org/?curid="+p.pageid));}
 function abstractText(inverted){if(!inverted)return "";return Object.entries(inverted).flatMap(([word,positions])=>positions.map(pos=>[pos,word])).sort((a,b)=>a[0]-b[0]).map(x=>x[1]).join(" ");}
 function cleanDoi(value){return String(value||"").trim().replace(/^https?:\/\/(dx\.)?doi\.org\//i,"").toLowerCase();}
