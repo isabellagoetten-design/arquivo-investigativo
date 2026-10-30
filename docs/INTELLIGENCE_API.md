@@ -86,6 +86,7 @@ Não chamar a função automaticamente em carregamentos de página. Ela deve ser
 ## 4. Estado de integração
 
 - Backend `research-assistant`: publicado, versão 3.
+- Backend `evidence-audit`: publicado, versão 2.
 - Backend `research-structure`: publicado, versão 2.
 - Backend `document-chat`: publicado, versão 9.
 - Migração de busca textual ranqueada: aplicada.
@@ -94,6 +95,7 @@ Não chamar a função automaticamente em carregamentos de página. Ela deve ser
 - Aprovação e persistência conectadas à RPC `accept_research_proposals`: implementadas.
 - Atlas atualizado para exibir relações da tabela `connections`.
 - Máquina do Tempo atualizada para exibir datas parciais ou desconhecidas.
+- Persistência de datas revisada para validar datas reais e preservar mês/ano sem inventar precisão.
 - Teste ponta a ponta com sessão real e navegação no navegador: pendente.
 
 A interface deve renderizar `answer` como texto seguro, exibir `citations` como links clicáveis e informar quando `grounded` for falso. Não renderizar HTML retornado pelo modelo.
@@ -188,3 +190,49 @@ A operação é transacional. Ela:
 - Teste ponta a ponta com uma sessão real: pendente.
 
 A interface deve mostrar uma prévia editável e pedir confirmação antes de chamar a RPC. Nunca enviar todas as propostas automaticamente.
+
+
+## 7. Auditoria cruzada de evidências
+
+**Função:** `evidence-audit` (versão 2)
+
+**Objetivo:** comparar resumos de evidências já vinculados a fontes diferentes dentro de uma investigação e apontar possíveis contradições, divergências, inconsistências cronológicas, corroborações e lacunas.
+
+### Chamada
+
+```js
+const { data, error } = await supabase.functions.invoke("evidence-audit", {
+  body: { investigation_id: currentInvestigationId }
+});
+```
+
+### Comportamento
+
+- Exige sessão autenticada e valida a propriedade da investigação.
+- Consulta somente vínculos de evidência da investigação indicada.
+- Não executa análise quando não há pelo menos dois registros de evidência provenientes de duas fontes distintas.
+- Retorna sinalizações com os IDs das evidências que sustentam cada ponto e uma etapa sugerida de verificação.
+- Não grava conclusões, não altera registros e exige revisão humana.
+- Não acessa novamente o conteúdo integral das páginas originais.
+
+**Limitação importante:** `research_evidence_links.evidence_excerpt` recebe descrições/resumos extraídos pela IA durante a estruturação. Esses textos não são citações literais. A auditoria compara esses resumos e os metadados das fontes; ela não certifica que o conteúdo original foi relido.
+
+### Categorias retornadas
+
+- `direct_contradiction`: afirmações explicitamente incompatíveis sobre o mesmo fato;
+- `factual_discrepancy`: divergência de detalhe;
+- `chronology_inconsistency`: possível incompatibilidade cronológica;
+- `unsupported_claim`: afirmação sem apoio suficiente nos registros analisados;
+- `corroboration`: possível apoio independente;
+- `source_dependence`: possível dependência entre fontes.
+
+A ausência de informação em uma fonte não é tratada automaticamente como contradição. A análise não conclui culpa, intenção ou responsabilidade jurídica.
+
+### Estado desta etapa
+
+- Edge Function `evidence-audit`: publicada, versão 2.
+- Painel de auditoria cruzada no dossiê: implementado.
+- RLS e permissões da tabela de evidências: acesso anônimo revogado e atualização direta bloqueada.
+- Índice para `research_evidence_links.user_id`: criado.
+- Evidências atualmente registradas no banco: 0. A função só produzirá uma comparação depois que houver evidências aprovadas de pelo menos duas fontes.
+- Teste ponta a ponta com sessão real: pendente.
