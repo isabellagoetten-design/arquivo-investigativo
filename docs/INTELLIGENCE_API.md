@@ -86,7 +86,7 @@ Não chamar a função automaticamente em carregamentos de página. Ela deve ser
 ## 4. Estado de integração
 
 - Backend `research-assistant`: publicado, versão 3.
-- Backend `evidence-audit`: publicado, versão 3.
+- Backend `evidence-audit`: publicado, versão 4.
 - Backend `research-structure`: publicado, versão 2.
 - Backend `document-chat`: publicado, versão 9.
 - Migração de busca textual ranqueada: aplicada.
