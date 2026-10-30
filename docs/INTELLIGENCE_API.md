@@ -272,4 +272,6 @@ A ausência de informação em uma fonte não é tratada automaticamente como co
 - Acesso anônimo à tabela revogado; permissões concedidas apenas a `authenticated`.
 - Perfis existentes em `people_profiles` não são migrados automaticamente, pois são fichas biográficas antigas e podem conter metadados inconsistentes.
 - A tabela começa vazia; perfis e associações precisam ser criados pelo usuário.
+- Teste transacional de criação e associação sob o papel `authenticated`: aprovado e revertido ao final, sem dados de teste persistidos.
+- Verificação de permissões e RLS: aprovada; acesso anônimo negado.
 - Teste ponta a ponta no navegador: pendente.
