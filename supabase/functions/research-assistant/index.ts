@@ -101,7 +101,7 @@ Deno.serve(withSupabase({ auth: "user" }, async (req, ctx) => {
         body: JSON.stringify({
           contents: [{ role: "user", parts: [{ text: prompt }] }],
           tools: [{ google_search: {} }],
-          generationConfig: { temperature: 0.2, maxOutputTokens: 3000 },
+          generationConfig: { maxOutputTokens: 3000 },
         }),
         signal: controller.signal,
       });
