@@ -249,6 +249,7 @@ A ausência de informação em uma fonte não é tratada automaticamente como co
 
 - `entity_profiles`: perfil mestre com tipo, nome principal, resumo, aliases, identificador externo opcional e URL de referência.
 - `topics.entity_profile_id`: vínculo opcional entre um registro local de investigação e um perfil mestre.
+- `timeline_event_entities`: associação N:N entre acontecimentos da Máquina do Tempo e perfis mestres. Um acontecimento pode envolver várias entidades; cada associação registra o tipo de participação.
 - Uma mesma entidade pode ser associada a vários registros `topics`.
 - A chave estrangeira composta `(entity_profile_id, user_id)` impede que um tópico seja associado ao perfil de outro usuário.
 - A exclusão do perfil é restrita enquanto houver tópicos vinculados, para evitar perda acidental de identidade.
@@ -258,7 +259,8 @@ A ausência de informação em uma fonte não é tratada automaticamente como co
 1. O usuário cria um perfil mestre.
 2. Escolhe explicitamente um perfil e um registro de investigação ainda não vinculado.
 3. O vínculo é salvo sem copiar nem sobrescrever o conteúdo do tópico.
-4. A página reúne os registros relacionados, investigações, conexões e fontes disponíveis. Eventos da Máquina do Tempo ainda não possuem vínculo direto com perfis mestres.
+4. A página reúne registros de investigação, conexões, acontecimentos da Máquina do Tempo e fontes disponíveis.
+5. Na Máquina do Tempo, o editor permite selecionar vários perfis mestres e descrever o tipo de participação. Os perfis associados aparecem nos cartões dos acontecimentos e nas fichas de entidade.
 5. O usuário pode desfazer um vínculo sem excluir o perfil nem o registro original.
 
 ### Tipos de entidade
@@ -269,10 +271,13 @@ A ausência de informação em uma fonte não é tratada automaticamente como co
 
 ### Segurança e estado
 
-- RLS habilitada em `entity_profiles`, com políticas de leitura, criação, atualização e exclusão por proprietário.
+- RLS habilitada em `entity_profiles` e `timeline_event_entities`, com políticas por proprietário.
+- Chaves estrangeiras compostas garantem que evento e perfil associado pertençam ao mesmo usuário.
+- `research_evidence_links` aceita agora `entity_profile_id` como quarto destino exclusivo de evidência.
+- Privilégios anônimos de `timeline_events` revogados; acesso à linha do tempo concedido apenas a `authenticated`.
 - Acesso anônimo à tabela revogado; permissões concedidas apenas a `authenticated`.
 - Perfis existentes em `people_profiles` não são migrados automaticamente, pois são fichas biográficas antigas e podem conter metadados inconsistentes.
 - A tabela começa vazia; perfis e associações precisam ser criados pelo usuário.
-- Teste transacional de criação e associação sob o papel `authenticated`: aprovado e revertido ao final, sem dados de teste persistidos.
+- Teste transacional de criação de perfil, acontecimento e associação sob o papel `authenticated`: aprovado e revertido ao final, sem dados de teste persistidos.
 - Verificação de permissões e RLS: aprovada; acesso anônimo negado.
 - Teste ponta a ponta no navegador: pendente.
