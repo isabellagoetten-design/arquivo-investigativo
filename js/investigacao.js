@@ -61,4 +61,39 @@ $("#source-form").addEventListener("submit",async event=>{
  button.disabled=false;if(result.error){status.textContent="Erro: "+result.error.message;return}
  event.currentTarget.reset();status.textContent="Fonte adicionada.";await loadRecords();
 });
-init().then(loadRecords);
+async function loadPdfDocuments(){
+ const list=$("#pdf-documents-list"),select=$("#pdf-document-select"),count=$("#pdf-count");
+ list.innerHTML='<p class="record-empty">Carregando documentos...</p>';
+ const result=await client.from("library_documents").select("id,title,author,page_count,file_size,storage_path,created_at,processing_status,investigation_id").eq("user_id",uid).order("created_at",{ascending:false});
+ if(result.error){list.textContent="Não foi possível carregar os PDFs: "+result.error.message;count.textContent="Erro";return}
+ const docs=result.data||[],attached=docs.filter(d=>d.investigation_id===id),available=docs.filter(d=>!d.investigation_id);
+ count.textContent=attached.length+" vinculado(s)";
+ select.innerHTML='<option value="">Selecione um PDF...</option>'+available.map(d=>'<option value="'+safeText(d.id)+'">'+safeText(d.title)+'</option>').join("");
+ if(!attached.length){list.innerHTML='<p class="record-empty">Nenhum PDF vinculado a esta investigação.</p>';return}
+ list.innerHTML=attached.map(d=>'<article class="record-card pdf-record"><div><h4>'+safeText(d.title)+'</h4><small class="record-date">'+safeText(d.author||"Autor não informado")+' · '+(d.page_count||"—")+' páginas · '+safeText(d.processing_status)+'</small></div><div class="record-actions"><button type="button" class="pdf-open" data-path="'+safeText(d.storage_path)+'">Abrir PDF ↗</button><button type="button" class="pdf-unlink" data-id="'+safeText(d.id)+'">Desvincular</button></div></article>').join("");
+ list.querySelectorAll(".pdf-open").forEach(b=>b.addEventListener("click",()=>openLibraryPdf(b.dataset.path,b)));
+ list.querySelectorAll(".pdf-unlink").forEach(b=>b.addEventListener("click",()=>unlinkPdf(b.dataset.id)));
+}
+async function openLibraryPdf(path,button){
+ const old=button.textContent;button.disabled=true;button.textContent="Abrindo...";
+ const result=await client.storage.from("library-private").createSignedUrl(path,300);
+ button.disabled=false;button.textContent=old;
+ if(result.error){$("#pdf-status").textContent="Não foi possível abrir: "+result.error.message;return}
+ window.open(result.data.signedUrl,"_blank","noopener,noreferrer");
+}
+async function unlinkPdf(documentId){
+ if(!confirm("Desvincular este PDF? Ele continuará salvo na Biblioteca."))return;
+ const result=await client.from("library_documents").update({investigation_id:null}).eq("id",documentId).eq("user_id",uid).eq("investigation_id",id);
+ if(result.error){$("#pdf-status").textContent="Erro ao desvincular: "+result.error.message;return}
+ $("#pdf-status").textContent="PDF desvinculado. O arquivo continua na Biblioteca.";
+ await loadPdfDocuments();
+}
+$("#pdf-assign-form").addEventListener("submit",async event=>{
+ event.preventDefault();const button=event.currentTarget.querySelector("button"),status=$("#pdf-status"),documentId=$("#pdf-document-select").value;
+ if(!documentId)return;button.disabled=true;status.textContent="Vinculando...";
+ const result=await client.from("library_documents").update({investigation_id:id}).eq("id",documentId).eq("user_id",uid).is("investigation_id",null);
+ button.disabled=false;
+ if(result.error){status.textContent="Não foi possível vincular: "+result.error.message;return}
+ status.textContent="PDF vinculado à investigação.";await loadPdfDocuments();
+});
+init().then(async()=>{if(uid){await loadRecords();await loadPdfDocuments();}});
