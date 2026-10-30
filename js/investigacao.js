@@ -188,31 +188,33 @@ async function loadEvidenceRegister(){
  if(button)button.disabled=true;
  if(status)status.textContent="Carregando vínculos de evidência...";
  const {data:links,error}=await client.from("research_evidence_links")
-  .select("id,source_id,reference_number,topic_id,timeline_event_id,connection_id,evidence_excerpt,confidence,created_at")
+  .select("id,source_id,reference_number,topic_id,timeline_event_id,connection_id,entity_profile_id,evidence_excerpt,confidence,created_at")
   .eq("user_id",uid).eq("investigation_id",id).order("created_at",{ascending:false}).limit(250);
  if(button)button.disabled=false;
  if(error){status.textContent="Não foi possível carregar as evidências: "+error.message;return;}
  if(!links?.length){list.innerHTML='<p class="record-empty">Ainda não há evidências vinculadas. Aprove propostas com referências para começar a formar este histórico.</p>';status.textContent="0 vínculos registrados.";return;}
- const sourceIds=[...new Set(links.map(x=>x.source_id))],topicIds=[...new Set(links.map(x=>x.topic_id).filter(Boolean))],eventIds=[...new Set(links.map(x=>x.timeline_event_id).filter(Boolean))],connectionIds=[...new Set(links.map(x=>x.connection_id).filter(Boolean))];
+ const sourceIds=[...new Set(links.map(x=>x.source_id))],topicIds=[...new Set(links.map(x=>x.topic_id).filter(Boolean))],eventIds=[...new Set(links.map(x=>x.timeline_event_id).filter(Boolean))],connectionIds=[...new Set(links.map(x=>x.connection_id).filter(Boolean))],entityIds=[...new Set(links.map(x=>x.entity_profile_id).filter(Boolean))];
  const [sources,topics,events,connections]=await Promise.all([
   client.from("sources").select("id,title,url").eq("user_id",uid).eq("investigation_id",id).in("id",sourceIds),
   topicIds.length?client.from("topics").select("id,title").eq("user_id",uid).eq("investigation_id",id).in("id",topicIds):Promise.resolve({data:[],error:null}),
   eventIds.length?client.from("timeline_events").select("id,title").eq("user_id",uid).eq("investigation_id",id).in("id",eventIds):Promise.resolve({data:[],error:null}),
-  connectionIds.length?client.from("connections").select("id,source_topic_id,target_topic_id,label").eq("user_id",uid).in("id",connectionIds):Promise.resolve({data:[],error:null})
+  connectionIds.length?client.from("connections").select("id,source_topic_id,target_topic_id,label").eq("user_id",uid).in("id",connectionIds):Promise.resolve({data:[],error:null}),
+  entityIds.length?client.from("entity_profiles").select("id,canonical_name").eq("user_id",uid).in("id",entityIds):Promise.resolve({data:[],error:null})
  ]);
- const err=sources.error||topics.error||events.error||connections.error;
+ const err=sources.error||topics.error||events.error||connections.error||entityProfiles.error;
  if(err){status.textContent="Não foi possível carregar o contexto das evidências: "+err.message;return;}
  const relatedTopicIds=[...new Set([...topicIds,...(connections.data||[]).flatMap(x=>[x.source_topic_id,x.target_topic_id])])];
  const relatedTopics=relatedTopicIds.length?await client.from("topics").select("id,title").eq("user_id",uid).eq("investigation_id",id).in("id",relatedTopicIds):{data:[],error:null};
  if(relatedTopics.error){status.textContent="Não foi possível carregar as entidades relacionadas.";return;}
  const map=rows=>new Map((rows||[]).map(x=>[x.id,x]));
- const sourceMap=map(sources.data),topicMap=map(relatedTopics.data),eventMap=map(events.data),connectionMap=map(connections.data);
+ const sourceMap=map(sources.data),topicMap=map(relatedTopics.data),eventMap=map(events.data),connectionMap=map(connections.data),profileMap=map(entityProfiles.data);
  const cards=links.map(item=>{
   const source=sourceMap.get(item.source_id);
   let target="Registro sem destino disponível";
   if(item.topic_id)target="Entidade: "+(topicMap.get(item.topic_id)?.title||"não encontrada");
   else if(item.timeline_event_id)target="Acontecimento: "+(eventMap.get(item.timeline_event_id)?.title||"não encontrado");
   else if(item.connection_id){const c=connectionMap.get(item.connection_id);target=c?"Relação: "+(topicMap.get(c.source_topic_id)?.title||"entidade")+" — "+(c.label||"relação")+" → "+(topicMap.get(c.target_topic_id)?.title||"entidade"):"Relação não encontrada";}
+  else if(item.entity_profile_id)target="Perfil mestre: "+(profileMap.get(item.entity_profile_id)?.canonical_name||"não encontrado");
   const sourceLink=source?.url&&/^https?:\/\//i.test(source.url)?'<a href="'+safeText(source.url)+'" target="_blank" rel="noopener noreferrer">'+safeText(source.title)+'</a>':safeText(source?.title||"Fonte não encontrada");
   const date=item.created_at?new Date(item.created_at).toLocaleDateString("pt-BR"):"";
   return '<article class="evidence-register-card"><div class="evidence-register-head"><strong>'+sourceLink+'</strong><span class="audit-type">['+safeText(item.reference_number)+']</span></div><small>'+safeText(target)+' · Confiança: '+safeText(item.confidence)+' · '+safeText(date)+'</small><p><strong>Resumo associado pela IA:</strong> '+safeText(item.evidence_excerpt||"Sem resumo.")+'</p></article>';
