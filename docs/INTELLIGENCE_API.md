@@ -88,8 +88,12 @@ Não chamar a função automaticamente em carregamentos de página. Ela deve ser
 - Backend `research-assistant`: publicado, versão 2.
 - Backend `document-chat`: publicado, versão 8.
 - Migração de busca textual ranqueada: aplicada.
-- Integração da interface com `research-assistant`: pendente.
-- Teste ponta a ponta com sessão real: pendente.
+- Interface do dossiê conectada a `research-assistant`: implementada.
+- Interface de revisão conectada a `research-structure`: implementada.
+- Aprovação e persistência conectadas à RPC `accept_research_proposals`: implementadas.
+- Atlas atualizado para exibir relações da tabela `connections`.
+- Máquina do Tempo atualizada para exibir datas parciais ou desconhecidas.
+- Teste ponta a ponta com sessão real e navegação no navegador: pendente.
 
 A interface deve renderizar `answer` como texto seguro, exibir `citations` como links clicáveis e informar quando `grounded` for falso. Não renderizar HTML retornado pelo modelo.
 
@@ -179,7 +183,7 @@ A operação é transacional. Ela:
 - Migrações de persistência e segurança: aplicadas.
 - Verificação de privilégios: autenticado pode executar; anônimo não pode.
 - RLS de evidências: habilitada.
-- Integração da RPC na interface: pendente.
+- Integração da RPC na interface do dossiê: implementada.
 - Teste ponta a ponta com uma sessão real: pendente.
 
 A interface deve mostrar uma prévia editável e pedir confirmação antes de chamar a RPC. Nunca enviar todas as propostas automaticamente.
