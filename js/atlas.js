@@ -17,15 +17,21 @@ async function init(){
 }
 async function loadAtlas(){
  const results=await Promise.all([
-  db.from("topics").select("id,title,content,color").eq("user_id",user.id).order("created_at",{ascending:false}),
-  db.from("topic_links").select("id,from_topic_id,to_topic_id").eq("user_id",user.id)
+  db.from("topics").select("id,title,content,color,entity_type,confidence").eq("user_id",user.id).order("created_at",{ascending:false}),
+  db.from("topic_links").select("id,from_topic_id,to_topic_id").eq("user_id",user.id),
+  db.from("connections").select("id,source_topic_id,target_topic_id,label").eq("user_id",user.id)
  ]);
- const t=results[0],l=results[1];
- if(t.error||l.error){
-  $("atlas-map").innerHTML='<div class="atlas-empty">Erro ao carregar: '+esc(t.error?.message||l.error?.message)+'</div>';
+ const t=results[0],l=results[1],c=results[2];
+ if(t.error||l.error||c.error){
+  $("atlas-map").innerHTML='<div class="atlas-empty">Erro ao carregar: '+esc(t.error?.message||l.error?.message||c.error?.message)+'</div>';
   return;
  }
- topics=t.data||[];links=l.data||[];render();
+ topics=t.data||[];
+ links=[
+  ...(l.data||[]).map(link=>({...link,table:"topic_links",label:""})),
+  ...(c.data||[]).map(link=>({id:link.id,from_topic_id:link.source_topic_id,to_topic_id:link.target_topic_id,label:link.label||"",table:"connections"}))
+ ];
+ render();
 }
 function render(){
  $("atlas-concept-count").textContent=topics.length;
@@ -65,7 +71,7 @@ function render(){
  }
  $("atlas-relations-list").innerHTML=links.length?links.map(link=>{
   const a=topics.find(topic=>topic.id===link.from_topic_id),b=topics.find(topic=>topic.id===link.to_topic_id);
-  return a&&b?'<div class="relation-row"><strong>'+esc(a.title)+'</strong><span class="relation-arrow">↔</span><strong>'+esc(b.title)+'</strong><button type="button" data-remove="'+link.id+'">Remover conexao</button></div>':"";
+  return a&&b?'<div class="relation-row"><strong>'+esc(a.title)+'</strong><span class="relation-arrow">↔</span><strong>'+esc(b.title)+'</strong>'+(link.label?'<small>'+esc(link.label)+'</small>':'')+'<button type="button" data-remove="'+link.id+'" data-remove-table="'+link.table+'">Remover conexao</button></div>':"";
  }).join(""):'<div class="atlas-empty">Nenhuma conexao criada ainda.</div>';
 }
 $("concept-form").addEventListener("submit",async event=>{
@@ -148,7 +154,8 @@ $("atlas-relations-list").addEventListener("click",async event=>{
  const button=event.target.closest("[data-remove]");
  if(!button)return;
  if(!confirm("Remover esta conexao?"))return;
- const result=await db.from("topic_links").delete().eq("id",button.dataset.remove).eq("user_id",user.id);
+ const table=button.dataset.removeTable==="connections"?"connections":"topic_links";
+ const result=await db.from(table).delete().eq("id",button.dataset.remove).eq("user_id",user.id);
  if(result.error){$("atlas-message").textContent="Erro ao remover: "+result.error.message;return;}
  await loadAtlas();
 });
