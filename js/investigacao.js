@@ -15,8 +15,9 @@ function renderRecords(target,items,error,type){
  if(!items.length){el.innerHTML='<p class="record-empty">Nenhum registro adicionado ainda.</p>';return}
  el.innerHTML=items.map(item=>{
   const details=type==="note"||type==="topic"?safeText(item.content):[item.author,item.notes].filter(Boolean).map(safeText).join(" · ");
+  const date=item.created_at?new Date(item.created_at).toLocaleDateString("pt-BR"):"";
   const link=type==="source"&&item.url&&(item.url.startsWith("https://")||item.url.startsWith("http://"))?'<a href="'+safeText(item.url)+'" target="_blank" rel="noopener noreferrer">Abrir fonte ↗</a>':"";
-  return '<article class="record-card"><div><h4>'+safeText(item.title)+'</h4><p>'+details+'</p>'+link+'</div><div class="record-actions"><button type="button" class="record-edit" data-record-type="'+type+'" data-record-id="'+safeText(item.id)+'">Editar</button><button type="button" class="record-delete" data-record-type="'+type+'" data-record-id="'+safeText(item.id)+'">Excluir</button></div></article>';
+  return '<article class="record-card"><div><h4>'+safeText(item.title)+'</h4><small class="record-date">'+safeText(date)+'</small><p>'+details+'</p>'+link+'</div><div class="record-actions"><button type="button" class="record-edit" data-record-type="'+type+'" data-record-id="'+safeText(item.id)+'">Editar</button><button type="button" class="record-delete" data-record-type="'+type+'" data-record-id="'+safeText(item.id)+'">Excluir</button></div></article>';
  }).join("");
  el.querySelectorAll(".record-delete").forEach(btn=>btn.addEventListener("click",()=>deleteRecord(btn.dataset.recordType,btn.dataset.recordId)));
  el.querySelectorAll(".record-edit").forEach(btn=>btn.addEventListener("click",()=>editRecord(btn.dataset.recordType,btn.dataset.recordId,items)));
@@ -33,7 +34,7 @@ async function editRecord(type,recordId,items){
 }
 async function deleteRecord(type,recordId){
  if(!confirm("Excluir este registro?"))return;
- const table=type==="note"?"notes":"sources";
+ const table=type==="note"?"notes":type==="topic"?"topics":"sources";
  const result=await client.from(table).delete().eq("id",recordId).eq("user_id",uid).eq("investigation_id",id);
  if(result.error){say("Não foi possível excluir: "+result.error.message);return}
  await loadRecords();
