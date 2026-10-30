@@ -215,7 +215,7 @@ const { data, error } = await supabase.functions.invoke("evidence-audit", {
 - Não grava conclusões, não altera registros e exige revisão humana.
 - Não acessa novamente o conteúdo integral das páginas originais.
 
-**Limitação importante:** `research_evidence_links.evidence_excerpt` recebe descrições/resumos extraídos pela IA durante a estruturação. Esses textos não são citações literais. A auditoria compara esses resumos e os metadados das fontes; ela não certifica que o conteúdo original foi relido.
+**Limitação importante:** `research_evidence_links.evidence_excerpt` recebe descrições/resumos extraídos pela IA durante a estruturação. A própria coluna está documentada no banco como paráfrase de IA. Esses textos não são citações literais. A auditoria compara esses resumos e os metadados das fontes; ela não certifica que o conteúdo original foi relido.
 
 ### Categorias retornadas
 
