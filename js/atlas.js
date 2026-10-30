@@ -85,7 +85,7 @@ importForm.addEventListener("submit",async event=>{
  const box=$("knowledge-import-results");
  $("knowledge-import-status").textContent="Consultando a memória compartilhada...";
  box.innerHTML="";
- const {data,error}=await db.from("knowledge_records").select("id,label,description,payload,wikidata_url,wikipedia_url").ilike("label","%"+query.replace(/[%_]/g,"\\\\function updateSelection(){")+"%").order("label").limit(12);
+ const {data,error}=await db.from("knowledge_records").select("id,label,description,payload,wikidata_url,wikipedia_url").ilike("label","%"+query.replace(/[%_]/g,"\\\\query.replace(/[%_]/g,"\\\\function updateSelection(){")")+"%").order("label").limit(12);
  if(error){$("knowledge-import-status").textContent="Não foi possível consultar: "+error.message;return;}
  if(!data?.length){$("knowledge-import-status").textContent="Nenhum registro salvo corresponde a essa busca. Pesquise primeiro na página Conhecimento.";return;}
  box.innerHTML=data.map(item=>'<article class="knowledge-import-card"><div><strong>'+esc(item.label)+'</strong><p>'+esc(item.description||item.payload?.summary||"Registro da base compartilhada")+'</p></div><button type="button" data-import-knowledge="'+esc(item.id)+'">Adicionar ao Atlas ＋</button><a href="'+esc(item.wikipedia_url||item.wikidata_url)+'" target="_blank" rel="noopener noreferrer">Fonte ↗</a></article>').join("");
