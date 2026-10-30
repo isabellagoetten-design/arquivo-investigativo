@@ -169,3 +169,26 @@ body.home-page{margin:0;background:#f5f0e8;color:var(--ink);font-family:"DM Sans
   .home-main { padding: 0 12px !important; }
   .empty-investigation { align-items: flex-start !important; }
 }
+
+
+/* MODAL DE CRIAÇÃO DE INVESTIGAÇÕES */
+.modal-backdrop{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:18px;background:#241313a8;backdrop-filter:blur(4px)}
+.modal-backdrop[hidden]{display:none!important}
+.investigation-dialog{position:relative;width:min(100%,560px);max-height:92vh;overflow:auto;padding:30px;background:#fffdf7;border:1px solid #dfcbbb;border-radius:12px;box-shadow:0 20px 70px #1d090933}
+.modal-close{position:absolute;top:14px;right:16px;width:34px;height:34px;border:0;border-radius:50%;background:#f5e8e3;color:var(--wine);font-size:24px}
+.investigation-dialog>.eyebrow{margin:0 0 8px}
+.investigation-dialog h2{margin:0;color:var(--wine);font:30px "DM Serif Display",serif}
+.modal-intro{margin:7px 0 22px;color:var(--muted);font-size:13px}
+#investigation-form{display:flex;flex-direction:column;gap:8px}
+#investigation-form label{margin-top:7px;color:var(--wine);font-size:12px;font-weight:700}
+#investigation-form input,#investigation-form select,#investigation-form textarea{width:100%;min-width:0;padding:12px;border:1px solid #d8c6b6;border-radius:6px;background:#fffaf2;color:var(--ink);font:14px "DM Sans",sans-serif}
+#investigation-form textarea{resize:vertical;line-height:1.5}
+#investigation-form input:focus,#investigation-form select:focus,#investigation-form textarea:focus{outline:2px solid #5a86cb66;border-color:var(--blue)}
+.modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:14px}
+.modal-actions .primary-button{width:auto;min-height:42px;margin:0;padding:0 15px}
+.modal-status{min-height:18px;margin:4px 0 0;color:var(--wine);font-size:12px}
+.investigation-item{padding:15px 16px;border:1px solid #e4d8cc;border-radius:8px;background:#fffdf8;margin-bottom:9px}
+.investigation-item h3{margin:0 0 5px;color:var(--wine);font:18px "DM Serif Display",serif}
+.investigation-item p{margin:0;color:#766b62;font-size:12px;line-height:1.5}
+.investigation-meta{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;color:#8a776c;font-size:10px}
+@media(max-width:600px){.investigation-dialog{padding:24px 18px}.investigation-dialog h2{font-size:26px}.modal-actions{flex-direction:column-reverse}.modal-actions button{width:100%!important;justify-content:center}}
