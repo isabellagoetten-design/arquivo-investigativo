@@ -6,3 +6,5 @@
 @media(max-width:640px){.save-destination{width:100%}}
 
 .result-actions button[data-create-case]{padding:8px 11px;border:1px solid #e3c9bd;background:#f7ece6;border-radius:7px}.result-actions button:disabled{opacity:.55;cursor:wait}
+
+.result-actions button[data-copy-citation]{padding:8px 11px;border:1px solid #d8cdbd;background:#fffdf7;border-radius:7px}.result-actions button[data-copy-citation]:hover{background:#f1e9dd}
