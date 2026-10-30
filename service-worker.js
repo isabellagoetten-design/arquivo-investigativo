@@ -1,4 +1,4 @@
-const CACHE_NAME = "arquivo-investigativo-v58";
+const CACHE_NAME = "arquivo-investigativo-v59";
 
 const FILES_TO_CACHE = [
   "./",
