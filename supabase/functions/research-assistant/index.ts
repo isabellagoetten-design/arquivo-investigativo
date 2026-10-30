@@ -14,18 +14,26 @@ const depthInstructions: Record<string, string> = {
   academico: "Produza análise aprofundada, com contexto histórico, conceitos, metodologia das fontes, divergências, limitações e bibliografia comentada.",
 };
 
-function addInlineReferences(answer: string, supports: Array<{ segment?: { endIndex?: number }; groundingChunkIndices?: number[] }>) {
-  const insertions: Array<{ index: number; refs: number[] }> = [];
+function addInlineReferences(
+  answer: string,
+  supports: Array<{ segment?: { endIndex?: number }; groundingChunkIndices?: number[] }>,
+  refMap: Map<number, number>,
+) {
+  const byPosition = new Map<number, Set<number>>();
   for (const support of supports ?? []) {
     const end = support.segment?.endIndex;
     if (typeof end !== "number" || end < 0 || end > answer.length) continue;
-    const refs = [...new Set((support.groundingChunkIndices ?? []).map((n) => n + 1))];
-    if (refs.length) insertions.push({ index: end, refs });
+    const refs = (support.groundingChunkIndices ?? [])
+      .map((index) => refMap.get(index))
+      .filter((ref): ref is number => typeof ref === "number");
+    if (!refs.length) continue;
+    if (!byPosition.has(end)) byPosition.set(end, new Set());
+    for (const ref of refs) byPosition.get(end)!.add(ref);
   }
-  insertions.sort((a, b) => b.index - a.index);
+  const insertions = [...byPosition.entries()].sort((a, b) => b[0] - a[0]);
   let result = answer;
-  for (const item of insertions) {
-    result = result.slice(0, item.index) + " " + item.refs.map((n) => "[" + n + "]").join("") + result.slice(item.index);
+  for (const [index, refs] of insertions) {
+    result = result.slice(0, index) + " " + [...refs].map((n) => "[" + n + "]").join("") + result.slice(index);
   }
   return result;
 }
@@ -120,17 +128,18 @@ Deno.serve(withSupabase({ auth: "user" }, async (req, ctx) => {
 
     const metadata = candidate?.groundingMetadata ?? {};
     const seen = new Set<string>();
-    const citations = (metadata.groundingChunks ?? [])
-      .map((chunk: { web?: { uri?: string; title?: string } }) => ({ url: chunk.web?.uri ?? "", title: chunk.web?.title ?? "Fonte sem título" }))
-      .filter((item: { url: string; title: string }) => {
-        if (!/^https?:\/\//i.test(item.url) || seen.has(item.url)) return false;
-        seen.add(item.url);
-        return true;
-      })
-      .slice(0, 20)
-      .map((item: { url: string; title: string }, index: number) => ({ ref: index + 1, ...item }));
+    const refMap = new Map<number, number>();
+    const citations: Array<{ ref: number; url: string; title: string }> = [];
+    for (const [index, chunk] of (metadata.groundingChunks ?? []).entries()) {
+      const url = chunk.web?.uri ?? "";
+      if (!/^https?:\/\//i.test(url) || seen.has(url) || citations.length >= 20) continue;
+      seen.add(url);
+      const ref = citations.length + 1;
+      refMap.set(index, ref);
+      citations.push({ ref, url, title: chunk.web?.title ?? "Fonte sem título" });
+    }
 
-    const answer = addInlineReferences(answerText, metadata.groundingSupports ?? []);
+    const answer = addInlineReferences(answerText, metadata.groundingSupports ?? [], refMap);
     const searchQueries = Array.isArray(metadata.webSearchQueries) ? metadata.webSearchQueries.slice(0, 12) : [];
 
     let savedSources = 0;
