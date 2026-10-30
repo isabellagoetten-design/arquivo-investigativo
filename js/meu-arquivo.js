@@ -5,7 +5,11 @@ const $=id=>document.getElementById(id);
 let records=[];
 function esc(v){return String(v??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));}
 function date(v){if(!v)return "";const d=new Date(v);return Number.isNaN(d.getTime())?"":d.toLocaleDateString("pt-BR",{day:"2-digit",month:"short",year:"numeric"});}
-async function loadTable(table,fields,userId,type){const result=await db.from(table).select(fields).eq("user_id",userId);if(result.error){console.warn("Erro em "+table,result.error.message);return [];}return (result.data||[]).map(item=>({...item,type}));}
+async function loadTable(table,fields,userId,type){
+ const result=await db.from(table).select(fields).eq("user_id",userId);
+ if(result.error)return {type,data:[],error:result.error.message};
+ return {type,data:(result.data||[]).map(item=>({...item,type})),error:null};
+}
 async function init(){
  const session=await db.auth.getSession();
  if(session.error||!session.data.session){location.replace("./index.html");return;}
@@ -17,9 +21,14 @@ async function init(){
   loadTable("topics","id,title,content,color,created_at,investigation_id",uid,"topic"),
   loadTable("timeline_events","id,title,event_date,description,category,source_url,created_at",uid,"event")
  ]);
- records=groups.flat();
- ["investigations","notes","sources","topics","events"].forEach((key,i)=>$( "count-"+key).textContent=groups[i].length);
- $("archive-status").textContent=records.length+" registros encontrados no seu acervo.";
+ records=groups.flatMap(group=>group.data);
+ const keys=["investigations","notes","sources","topics","events"];
+ groups.forEach((group,i)=>$( "count-"+keys[i]).textContent=group.error?"!":group.data.length);
+ const failed=groups.filter(group=>group.error);
+ $("archive-status").textContent=failed.length
+  ?"Parte do acervo não carregou ("+failed.map(group=>group.type).join(", ")+"). Os demais registros estão disponíveis; atualize a página ou tente novamente."
+  :records.length+" registros encontrados no seu acervo.";
+ $("archive-status").setAttribute("data-error",failed.length?"true":"false");
  render();
 }
 function render(){
