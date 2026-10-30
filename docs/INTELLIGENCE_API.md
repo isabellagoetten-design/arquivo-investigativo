@@ -157,6 +157,7 @@ A operação é transacional. Ela:
 4. Cria acontecimentos aprovados em `timeline_events`, preservando datas parciais sem inventar dia ou mês.
 5. Cria relações entre entidades aprovadas em `connections`.
 6. Registra a origem de cada proposta em `research_evidence_links`, associando fonte e número de referência à entidade, evento ou conexão.
+7. Retorna `saved_entity_topic_map`, um mapa de nomes normalizados para os IDs dos tópicos criados, permitindo vincular com segurança os tópicos aprovados a perfis mestres selecionados na interface.
 
 ### Resposta
 
@@ -168,7 +169,8 @@ A operação é transacional. Ela:
   "saved_entities": 5,
   "saved_events": 4,
   "saved_relationships": 2,
-  "saved_evidence_links": 11
+  "saved_evidence_links": 11,
+  "saved_entity_topic_map": { "nome da entidade": "topic-uuid" }
 }
 ```
 
@@ -187,6 +189,8 @@ A operação é transacional. Ela:
 - Verificação de privilégios: autenticado pode executar; anônimo não pode.
 - RLS de evidências: habilitada.
 - Integração da RPC na interface do dossiê: implementada.
+- Sugestão de perfis mestres existentes na revisão da IA: correspondência exata por nome principal ou alias; a seleção é sempre manual.
+- O vínculo usa o mapa de IDs retornado pela RPC, sem procurar tópicos antigos por título.
 - Teste ponta a ponta com uma sessão real: pendente.
 
 A interface deve mostrar uma prévia editável e pedir confirmação antes de chamar a RPC. Nunca enviar todas as propostas automaticamente.
@@ -194,7 +198,7 @@ A interface deve mostrar uma prévia editável e pedir confirmação antes de ch
 
 ## 7. Auditoria cruzada de evidências
 
-**Função:** `evidence-audit` (versão 3)
+**Função:** `evidence-audit` (versão 4)
 
 **Objetivo:** comparar resumos de evidências já vinculados a fontes diferentes dentro de uma investigação e apontar possíveis contradições, divergências, inconsistências cronológicas, corroborações e lacunas.
 
@@ -230,7 +234,7 @@ A ausência de informação em uma fonte não é tratada automaticamente como co
 
 ### Estado desta etapa
 
-- Edge Function `evidence-audit`: publicada, versão 3.
+- Edge Function `evidence-audit`: publicada, versão 4; reconhece evidências associadas diretamente a perfis mestres.
 - Livro de evidências no dossiê: implementado, com origem, referência, destino e resumo associado.
 - Painel de auditoria cruzada no dossiê: implementado.
 - RLS e permissões da tabela de evidências: acesso anônimo revogado e atualização direta bloqueada.
@@ -279,5 +283,6 @@ A ausência de informação em uma fonte não é tratada automaticamente como co
 - Perfis existentes em `people_profiles` não são migrados automaticamente, pois são fichas biográficas antigas e podem conter metadados inconsistentes.
 - A tabela começa vazia; perfis e associações precisam ser criados pelo usuário.
 - Teste transacional de criação de perfil, acontecimento e associação sob o papel `authenticated`: aprovado e revertido ao final, sem dados de teste persistidos.
+- Teste transacional da RPC: mapa de IDs retornado e associação do tópico ao perfil mestre aprovados; transação revertida.
 - Verificação de permissões e RLS: aprovada; acesso anônimo negado.
 - Teste ponta a ponta no navegador: pendente.
