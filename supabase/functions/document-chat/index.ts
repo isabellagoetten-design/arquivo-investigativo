@@ -134,7 +134,7 @@ ${evidenceText}`;
           headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
           body: JSON.stringify({
             contents: [{ role: "user", parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.2, maxOutputTokens: 900 },
+            generationConfig: { maxOutputTokens: 900 },
           }),
           signal: controller.signal,
         },
