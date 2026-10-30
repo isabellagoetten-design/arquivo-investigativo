@@ -194,7 +194,7 @@ A interface deve mostrar uma prévia editável e pedir confirmação antes de ch
 
 ## 7. Auditoria cruzada de evidências
 
-**Função:** `evidence-audit` (versão 2)
+**Função:** `evidence-audit` (versão 3)
 
 **Objetivo:** comparar resumos de evidências já vinculados a fontes diferentes dentro de uma investigação e apontar possíveis contradições, divergências, inconsistências cronológicas, corroborações e lacunas.
 
@@ -230,7 +230,7 @@ A ausência de informação em uma fonte não é tratada automaticamente como co
 
 ### Estado desta etapa
 
-- Edge Function `evidence-audit`: publicada, versão 2.
+- Edge Function `evidence-audit`: publicada, versão 3.
 - Painel de auditoria cruzada no dossiê: implementado.
 - RLS e permissões da tabela de evidências: acesso anônimo revogado e atualização direta bloqueada.
 - Índice para `research_evidence_links.user_id`: criado.
