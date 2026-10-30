@@ -14,9 +14,20 @@ function renderRecords(target,items,error,type){
  el.innerHTML=items.map(item=>{
   const details=type==="note"?safeText(item.content):[item.author,item.notes].filter(Boolean).map(safeText).join(" · ");
   const link=type==="source"&&item.url&&(item.url.startsWith("https://")||item.url.startsWith("http://"))?'<a href="'+safeText(item.url)+'" target="_blank" rel="noopener noreferrer">Abrir fonte ↗</a>':"";
-  return '<article class="record-card"><div><h4>'+safeText(item.title)+'</h4><p>'+details+'</p>'+link+'</div><button type="button" class="record-delete" data-record-type="'+type+'" data-record-id="'+safeText(item.id)+'">Excluir</button></article>';
+  return '<article class="record-card"><div><h4>'+safeText(item.title)+'</h4><p>'+details+'</p>'+link+'</div><div class="record-actions"><button type="button" class="record-edit" data-record-type="'+type+'" data-record-id="'+safeText(item.id)+'">Editar</button><button type="button" class="record-delete" data-record-type="'+type+'" data-record-id="'+safeText(item.id)+'">Excluir</button></div></article>';
  }).join("");
  el.querySelectorAll(".record-delete").forEach(btn=>btn.addEventListener("click",()=>deleteRecord(btn.dataset.recordType,btn.dataset.recordId)));
+ el.querySelectorAll(".record-edit").forEach(btn=>btn.addEventListener("click",()=>editRecord(btn.dataset.recordType,btn.dataset.recordId,items)));
+}
+async function editRecord(type,recordId,items){
+ const item=items.find(entry=>entry.id===recordId);if(!item)return;
+ const title=prompt("Título:",item.title);if(title===null)return;if(!title.trim()){say("O título não pode ficar vazio.");return}
+ let changes={title:title.trim()};
+ if(type==="note"){const content=prompt("Conteúdo da anotação:",item.content||"");if(content===null)return;changes.content=content}
+ else{const url=prompt("Link da fonte:",item.url||"");if(url===null)return;if(url.trim()&&!(url.trim().startsWith("https://")||url.trim().startsWith("http://"))){say("O link precisa começar com http:// ou https://.");return}const author=prompt("Autor ou instituição:",item.author||"");if(author===null)return;const notes=prompt("Observações:",item.notes||"");if(notes===null)return;changes.url=url.trim()||null;changes.author=author.trim()||null;changes.notes=notes.trim()||null}
+ const table=type==="note"?"notes":"sources";
+ const result=await client.from(table).update(changes).eq("id",recordId).eq("user_id",uid).eq("investigation_id",id);
+ if(result.error){say("Erro ao editar: "+result.error.message);return}say("Registro atualizado.");await loadRecords();
 }
 async function deleteRecord(type,recordId){
  if(!confirm("Excluir este registro?"))return;
