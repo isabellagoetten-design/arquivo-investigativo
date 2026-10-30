@@ -59,7 +59,7 @@ function render(){
   }).join("");
   const cards=topics.map((topic,index)=>{
    const p=positions[index],color=/^#[0-9a-f]{6}$/i.test(topic.color||"")?topic.color:"#E38792";
-   return '<article class="atlas-node" tabindex="0" role="button" data-topic="'+topic.id+'" aria-label="Selecionar conceito '+esc(topic.title)+'" style="left:'+p.x/10+'%;top:'+p.y/6.5+'%;--node-color:'+color+'"><span class="node-count">'+(degree[topic.id]||0)+' conexoes</span><h3>'+esc(topic.title)+'</h3><p>'+esc((topic.content||"").slice(0,125))+'</p></article>';
+   return '<article class="atlas-node" tabindex="0" role="button" data-topic="'+topic.id+'" aria-label="Selecionar conceito '+esc(topic.title)+'" style="left:'+p.x/10+'%;top:'+p.y/6.5+'%;--node-color:'+color+'"><span class="node-count">'+(degree[topic.id]||0)+' conexoes</span><h3>'+esc(topic.title)+'</h3><p>'+esc((topic.content||"").slice(0,125))+'</p><button type="button" class="delete-concept" data-delete-topic="'+topic.id+'" aria-label="Excluir '+esc(topic.title)+'">Excluir</button></article>';
   }).join("");
   map.innerHTML='<svg class="atlas-lines" viewBox="0 0 1000 650" preserveAspectRatio="none" aria-hidden="true">'+lines+'</svg><div class="atlas-node-layer">'+cards+'</div>';
  }
