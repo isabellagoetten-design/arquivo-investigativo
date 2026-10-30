@@ -101,7 +101,7 @@ $("knowledge-import-results").addEventListener("click",async event=>{
  const button=event.target.closest("[data-import-knowledge]");
  if(!button)return;
  const id=button.dataset.importKnowledge;
- const {data,error}=await db.from("knowledge_records").select("id,label,description,payload,wikidata_url,wikipedia_url").ilike("label","%"+query+"%").order("label").limit(12);
+ const {data,error}=await db.from("knowledge_records").select("id,label,description,payload,wikidata_url,wikipedia_url").eq("id",id).maybeSingle();
  if(error||!data){$("knowledge-import-status").textContent="Registro não encontrado.";return;}
  const exists=topics.some(topic=>topic.title.toLocaleLowerCase("pt-BR")===data.label.toLocaleLowerCase("pt-BR"));
  if(exists){$("knowledge-import-status").textContent="Esse conceito já existe no seu Atlas.";return;}
