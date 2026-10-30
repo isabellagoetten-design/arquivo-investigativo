@@ -1640,7 +1640,7 @@ input {
   .form-panel {
     position: absolute !important;
     z-index: 3 !important;
-    top: 40% !important;
+    top: 36% !important;
     left: 22% !important;
     display: flex !important;
     width: 56% !important;
@@ -1670,7 +1670,7 @@ input {
 
 @media (max-width: 390px) {
   .form-panel {
-    top: 40% !important;
+    top: 36% !important;
     left: 21% !important;
     width: 58% !important;
   }
