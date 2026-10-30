@@ -33,7 +33,7 @@ if(timelineKnowledgeForm){
   let date=match[1].match(/^\d{4}$/)?match[1]+"-01-01":null;
   if(!date){const months={janeiro:"01",fevereiro:"02",março:"03",abril:"04",maio:"05",junho:"06",julho:"07",agosto:"08",setembro:"09",outubro:"10",novembro:"11",dezembro:"12"};const p=match[1].match(/(\d{1,2}) de ([a-zç]+) de (\d{3,4})/i);if(p&&months[p[2].toLocaleLowerCase("pt-BR")])date=p[3]+"-"+months[p[2].toLocaleLowerCase("pt-BR")]+"-"+p[1].padStart(2,"0");}
   if(!date){document.getElementById("timeline-knowledge-status").textContent="Data não interpretada com segurança. Confira a fonte e registre manualmente.";return;}
-  const {error:saveError}=await db.from("timeline_events").insert({user_id:user.id,title:data.label,event_date:date,category:"História",description:[data.description,summary].filter(Boolean).join("\\n\\n").slice(0,4000),source_url:data.wikipedia_url||data.wikidata_url});
+  const {error:saveError}=await db.from("timeline_events").insert({user_id:user.id,title:data.label,event_date:date,category:"História",description:[data.description,summary].filter(Boolean).join("\n\n").slice(0,4000),source_url:data.wikipedia_url||data.wikidata_url});
   if(saveError){document.getElementById("timeline-knowledge-status").textContent="Erro ao salvar: "+saveError.message;return;}
   button.disabled=true;button.textContent="Adicionado ✓";document.getElementById("timeline-knowledge-status").textContent="Acontecimento adicionado. Confira a data na fonte original.";await loadEvents();
  });
