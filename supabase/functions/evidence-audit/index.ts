@@ -61,7 +61,7 @@ Deno.serve(withSupabase({ auth: "user" }, async (req, ctx) => {
 
     const { data: links, error: linksError } = await ctx.supabase
       .from("research_evidence_links")
-      .select("id,source_id,reference_number,topic_id,timeline_event_id,connection_id,evidence_excerpt,confidence,created_at")
+      .select("id,source_id,reference_number,topic_id,timeline_event_id,connection_id,entity_profile_id,evidence_excerpt,confidence,created_at")
       .eq("user_id", userId).eq("investigation_id", investigationId)
       .order("created_at", { ascending: true }).limit(250);
     if (linksError) {
@@ -85,11 +85,13 @@ Deno.serve(withSupabase({ auth: "user" }, async (req, ctx) => {
     const initialTopicIds = evidence.map((item: any) => item.topic_id).filter(Boolean);
     const eventIds = [...new Set(evidence.map((item: any) => item.timeline_event_id).filter(Boolean))];
     const connectionIds = [...new Set(evidence.map((item: any) => item.connection_id).filter(Boolean))];
+    const entityProfileIds = [...new Set(evidence.map((item: any) => item.entity_profile_id).filter(Boolean))];
 
-    const [sourceResult, eventResult, connectionResult] = await Promise.all([
+    const [sourceResult, eventResult, connectionResult, entityProfileResult] = await Promise.all([
       ctx.supabase.from("sources").select("id,title,url,author,source_type").eq("user_id", userId).eq("investigation_id", investigationId).in("id", sourceIds),
       eventIds.length ? ctx.supabase.from("timeline_events").select("id,title,event_date,date_label,date_precision,description,confidence").eq("user_id", userId).eq("investigation_id", investigationId).in("id", eventIds) : Promise.resolve({ data: [], error: null }),
-      connectionIds.length ? ctx.supabase.from("connections").select("id,source_topic_id,target_topic_id,label").eq("user_id", userId).in("id", connectionIds) : Promise.resolve({ data: [], error: null })
+      connectionIds.length ? ctx.supabase.from("connections").select("id,source_topic_id,target_topic_id,label").eq("user_id", userId).in("id", connectionIds) : Promise.resolve({ data: [], error: null }),
+      entityProfileIds.length ? ctx.supabase.from("entity_profiles").select("id,canonical_name,entity_type,summary").eq("user_id", userId).in("id", entityProfileIds) : Promise.resolve({ data: [], error: null })
     ]);
     const relatedTopicIds = [
       ...initialTopicIds,
@@ -100,7 +102,7 @@ Deno.serve(withSupabase({ auth: "user" }, async (req, ctx) => {
       ? await ctx.supabase.from("topics").select("id,title,content,entity_type,confidence").eq("user_id", userId).eq("investigation_id", investigationId).in("id", topicIds)
       : { data: [], error: null };
 
-    const queryError = sourceResult.error || topicResult.error || eventResult.error || connectionResult.error;
+    const queryError = sourceResult.error || topicResult.error || eventResult.error || connectionResult.error || entityProfileResult.error;
     if (queryError) {
       console.error("evidence-audit target lookup failed", queryError.code ?? "DB_ERROR");
       return json({ code: "EVIDENCE_CONTEXT_ERROR", error: "Não foi possível carregar o contexto das evidências." }, 500);
@@ -110,6 +112,7 @@ Deno.serve(withSupabase({ auth: "user" }, async (req, ctx) => {
     const topicMap = new Map((topicResult.data ?? []).map((item: any) => [item.id, item]));
     const eventMap = new Map((eventResult.data ?? []).map((item: any) => [item.id, item]));
     const connectionMap = new Map((connectionResult.data ?? []).map((item: any) => [item.id, item]));
+    const entityProfileMap = new Map((entityProfileResult.data ?? []).map((item: any) => [item.id, item]));
     const targetLabel = (item: any) => {
       if (item.topic_id) {
         const target: any = topicMap.get(item.topic_id);
@@ -118,6 +121,10 @@ Deno.serve(withSupabase({ auth: "user" }, async (req, ctx) => {
       if (item.timeline_event_id) {
         const target: any = eventMap.get(item.timeline_event_id);
         return target ? "Acontecimento: " + target.title + " — " + (target.description ?? "") + " (data: " + (target.date_label ?? "não informada") + ")" : "Acontecimento sem descrição disponível";
+      }
+      if (item.entity_profile_id) {
+        const profile: any = entityProfileMap.get(item.entity_profile_id);
+        return profile ? "Perfil mestre: " + profile.canonical_name + " (" + profile.entity_type + ") — " + (profile.summary ?? "") : "Perfil mestre sem descrição disponível";
       }
       const target: any = connectionMap.get(item.connection_id);
       if (!target) return "Relação sem descrição disponível";
