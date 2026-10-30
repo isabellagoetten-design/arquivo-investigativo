@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#4E0A0B">
+<meta name="description" content="Cadastro de entidades e vínculos entre investigações no Arquivo Investigativo.">
+<title>Entidades | Arquivo Investigativo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/main.css?v=28">
+<link rel="stylesheet" href="./css/entidades.css?v=1">
+<link rel="stylesheet" href="./css/navigation.css?v=3">
+<link rel="manifest" href="./manifest.webmanifest">
+</head>
+<body class="entities-page">
+<main class="entities-shell">
+<header class="entities-head"><a href="./inicio.html">← Meu Arquivo</a><span>ARQUIVO INVESTIGATIVO · REGISTRO MESTRE</span></header>
+<section class="entities-hero">
+ <div><p class="eyebrow">IDENTIDADES E CONTEXTO</p><h1>Registro de<br><em>entidades.</em></h1><p>Crie um perfil central para uma pessoa, organização, lugar ou conceito e vincule a ele os registros de diferentes investigações.</p></div>
+ <div class="entities-stamp">EI.<small>ÍNDICE<br>DE ENTIDADES</small></div>
+</section>
+<section class="entities-principle"><strong>Correspondência manual, não automática.</strong><span>O sistema não une nomes parecidos por conta própria. Você escolhe quais registros pertencem à mesma entidade e pode desfazer o vínculo.</span></section>
+<section class="entity-create-section">
+ <div class="entity-section-heading"><div><p class="eyebrow">NOVO REGISTRO MESTRE</p><h2>Criar perfil</h2></div><span>01 / CADASTRO</span></div>
+ <form id="entity-create-form" class="entity-form">
+  <label>Tipo de entidade<select name="entity_type" required><option value="person">Pessoa</option><option value="organization">Organização</option><option value="place">Lugar</option><option value="event">Acontecimento</option><option value="concept">Conceito</option><option value="other">Outro</option></select></label>
+  <label>Nome principal<input name="canonical_name" maxlength="180" required placeholder="Ex.: Marie Curie"></label>
+  <label class="entity-form-wide">Resumo de identificação<textarea name="summary" rows="3" maxlength="1200" placeholder="Contexto breve para distinguir esta entidade de outras com nomes semelhantes."></textarea></label>
+  <label>Outros nomes / aliases<input name="aliases" maxlength="500" placeholder="Ex.: Maria Skłodowska; Madame Curie"></label>
+  <label>Identificador externo (opcional)<input name="external_identifier" maxlength="160" placeholder="Ex.: Q7186"></label>
+  <label class="entity-form-wide">Fonte de referência (opcional)<input name="external_source_url" type="url" maxlength="1000" placeholder="https://..."></label>
+  <div class="entity-form-actions"><button type="submit">Criar perfil ↗</button><p id="entity-create-status" role="status"></p></div>
+ </form>
+</section>
+<section class="entity-link-section">
+ <div class="entity-section-heading"><div><p class="eyebrow">REUTILIZAR REGISTROS EXISTENTES</p><h2>Vincular a uma investigação</h2></div><span>02 / ASSOCIAÇÃO</span></div>
+ <p class="entity-section-copy">Selecione um perfil mestre e um conceito já registrado em uma investigação. O vínculo não copia nem altera o conteúdo original.</p>
+ <form id="entity-link-form" class="entity-link-form">
+  <label>Perfil mestre<select name="profile_id" id="entity-profile-select" required><option value="">Carregando perfis...</option></select></label>
+  <label>Registro da investigação<select name="topic_id" id="entity-topic-select" required><option value="">Carregando registros...</option></select></label>
+  <button type="submit">Vincular registro ↗</button>
+ </form>
+ <p id="entity-link-status" role="status"></p>
+</section>
+<section class="entity-directory-section">
+ <div class="entity-section-heading"><div><p class="eyebrow">ÍNDICE PESSOAL</p><h2>Entidades cadastradas</h2></div><span id="entity-count">0 perfis</span></div>
+ <div id="entity-directory" class="entity-directory"><p class="entity-empty">Carregando registro de entidades...</p></div>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./js/entidades.js?v=1"></script>
+<script src="./js/navigation.js?v=4"></script>
+</body></html>
