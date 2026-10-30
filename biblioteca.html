@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#4E0A0B"><title>Biblioteca | Arquivo Investigativo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="./css/main.css?v=28"><link rel="stylesheet" href="./css/biblioteca.css?v=1"><link rel="manifest" href="./manifest.webmanifest">
+</head>
+<body class="library-page">
+<main class="library-shell">
+<header class="library-header"><a href="./inicio.html" class="back-link">← Meu Arquivo</a><span class="library-kicker">ARQUIVO INVESTIGATIVO · ACERVO PESSOAL</span></header>
+<section class="library-intro"><div><p class="eyebrow">COLEÇÃO DE REFERÊNCIAS</p><h1>Biblioteca<span>.</span></h1><p>Guarde fontes, links e documentos. Cada referência fica associada à sua conta.</p></div><div class="library-mark" aria-hidden="true">▤</div></section>
+<section class="library-tools"><label class="search-box"><span>⌕</span><input id="library-search" type="search" placeholder="Buscar por título, autor ou anotação..." aria-label="Buscar fontes"></label><select id="library-filter" aria-label="Filtrar fontes"><option value="all">Todas as fontes</option><option value="site">Sites e artigos</option><option value="documento">Documentos</option><option value="video">Vídeos</option><option value="livro">Livros</option><option value="outro">Outras</option></select><button id="show-source-form" class="add-source-button" type="button">＋ Adicionar fonte</button></section>
+<section id="source-editor" class="source-editor" hidden><div class="editor-heading"><div><p class="eyebrow">NOVO MATERIAL</p><h2>Adicionar à biblioteca</h2></div><button id="close-source-form" class="close-editor" type="button" aria-label="Fechar">×</button></div>
+<form id="library-form"><div class="form-grid"><label>Título<input name="title" maxlength="180" required placeholder="Nome do artigo, documento ou material"></label><label>Tipo<select name="source_type"><option value="site">Site ou artigo</option><option value="documento">Documento</option><option value="video">Vídeo</option><option value="livro">Livro</option><option value="outro">Outro</option></select></label><label>Link ou endereço<input name="url" type="url" maxlength="2000" placeholder="https://..."></label><label>Autor ou instituição<input name="author" maxlength="180" placeholder="Quem produziu este material?"></label><label class="wide-field">Anotações<textarea name="notes" rows="3" maxlength="3000" placeholder="Por que esta fonte é útil? O que vale consultar?"></textarea></label></div><div class="editor-footer"><p id="library-status" role="status"></p><button id="save-source" class="add-source-button" type="submit">Salvar na biblioteca ↗</button></div></form></section>
+<div class="collection-heading"><div><p class="eyebrow">SEU ACERVO</p><h2>Materiais guardados</h2></div><span id="source-count">0 fontes</span></div>
+<section id="library-list" class="library-list" aria-live="polite"><div class="library-empty"><span>▤</span><h3>Carregando sua biblioteca...</h3></div></section>
+<p id="library-message" class="library-message" role="status"></p>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./js/biblioteca.js?v=1"></script>
+</body></html>
