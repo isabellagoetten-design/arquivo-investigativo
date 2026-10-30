@@ -257,7 +257,7 @@ A ausência de informação em uma fonte não é tratada automaticamente como co
 1. O usuário cria um perfil mestre.
 2. Escolhe explicitamente um perfil e um registro de investigação ainda não vinculado.
 3. O vínculo é salvo sem copiar nem sobrescrever o conteúdo do tópico.
-4. A página reúne os registros relacionados, investigações, acontecimentos associados, conexões e fontes disponíveis.
+4. A página reúne os registros relacionados, investigações, conexões e fontes disponíveis. Eventos da Máquina do Tempo ainda não possuem vínculo direto com perfis mestres.
 5. O usuário pode desfazer um vínculo sem excluir o perfil nem o registro original.
 
 ### Tipos de entidade
