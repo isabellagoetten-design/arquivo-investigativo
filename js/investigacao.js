@@ -75,11 +75,13 @@ async function loadPdfDocuments(){
  list.querySelectorAll(".pdf-unlink").forEach(b=>b.addEventListener("click",()=>unlinkPdf(b.dataset.id)));
 }
 async function openLibraryPdf(path,button){
+ const tab=window.open("about:blank","_blank");
+ if(!tab){$("#pdf-status").textContent="O navegador bloqueou a nova aba. Permita pop-ups para abrir o PDF.";return;}
  const old=button.textContent;button.disabled=true;button.textContent="Abrindo...";
  const result=await client.storage.from("library-private").createSignedUrl(path,300);
  button.disabled=false;button.textContent=old;
- if(result.error){$("#pdf-status").textContent="Não foi possível abrir: "+result.error.message;return}
- window.open(result.data.signedUrl,"_blank","noopener,noreferrer");
+ if(result.error){tab.close();$("#pdf-status").textContent="Não foi possível abrir: "+result.error.message;return}
+ tab.location.href=result.data.signedUrl;
 }
 async function unlinkPdf(documentId){
  if(!confirm("Desvincular este PDF? Ele continuará salvo na Biblioteca."))return;
