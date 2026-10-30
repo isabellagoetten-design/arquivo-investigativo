@@ -1631,7 +1631,7 @@ input {
     margin: 0 !important;
     border: 0 !important;
     border-radius: 0 !important;
-    background: url("/arquivo-investigativo/entrada-mobile.png?v=8") center center / 100% 100% no-repeat !important;
+    background: url("/arquivo-investigativo/entrada-mobile.png?v=9") center center / cover no-repeat !important;
     box-shadow: none !important;
   }
 
