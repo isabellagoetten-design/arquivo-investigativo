@@ -75,7 +75,8 @@ function renderEntityDirectory(){
   }).join(""):'<p class="entity-empty">Nenhum registro de investigação vinculado a este perfil.</p>';
   const aliases=Array.isArray(profile.aliases)?profile.aliases.filter(Boolean):[];
   const sourceLink=profile.external_source_url&&/^https?:\/\//i.test(profile.external_source_url)?'<a class="entity-card-source" href="'+entitySafe(profile.external_source_url)+'" target="_blank" rel="noopener noreferrer">Fonte de identificação ↗</a>':"";
-  return '<article class="entity-card" data-entity-card="'+profile.id+'"><div class="entity-card-top"><span class="entity-type">'+entitySafe(entityTypes[profile.entity_type]||"Outro")+'</span><span class="entity-type">'+linked.length+' vínculo(s)</span></div><h3>'+entitySafe(profile.canonical_name)+'</h3><p class="entity-card-summary">'+entitySafe(profile.summary||"Sem resumo de identificação.")+'</p>'+(aliases.length?'<small>Também conhecido como: '+aliases.map(entitySafe).join(", ")+'</small>':'')+'<div class="entity-card-stats"><span>'+new Set(linked.map(topic=>topic.investigation_id).filter(Boolean)).size+' investigação(ões)</span><span>'+events.length+' acontecimento(s)</span><span>'+connections.length+' relação(ões)</span><span>'+sourceCount+' fonte(s)</span></div><details><summary>Ver registros, acontecimentos e fontes</summary><div class="entity-topic-list">'+topicMarkup+'</div></details>'+sourceLink+'</article>';
+  const editForm='<details class="entity-edit-details"><summary>Editar identificação</summary><form class="entity-edit-form" data-edit-profile="'+profile.id+'"><label>Tipo<select name="entity_type">'+Object.entries(entityTypes).map(([key,label])=>'<option value="'+key+'"'+(profile.entity_type===key?' selected':'')+'>'+label+'</option>').join("")+'</select></label><label>Nome principal<input name="canonical_name" maxlength="180" required value="'+entitySafe(profile.canonical_name)+'"></label><label>Resumo<textarea name="summary" rows="3" maxlength="1200">'+entitySafe(profile.summary||"")+'</textarea></label><label>Aliases separados por ponto e vírgula<input name="aliases" maxlength="500" value="'+entitySafe(aliases.join("; "))+'"></label><label>Identificador externo<input name="external_identifier" maxlength="160" value="'+entitySafe(profile.external_identifier||"")+'"></label><label>URL de referência<input name="external_source_url" type="url" maxlength="1000" value="'+entitySafe(profile.external_source_url||"")+'"></label><button type="submit">Salvar alterações</button></form></details>';
+  return '<article class="entity-card" data-entity-card="'+profile.id+'"><div class="entity-card-top"><span class="entity-type">'+entitySafe(entityTypes[profile.entity_type]||"Outro")+'</span><span class="entity-type">'+linked.length+' vínculo(s)</span></div><h3>'+entitySafe(profile.canonical_name)+'</h3><p class="entity-card-summary">'+entitySafe(profile.summary||"Sem resumo de identificação.")+'</p>'+(aliases.length?'<small>Também conhecido como: '+aliases.map(entitySafe).join(", ")+'</small>':'')+'<div class="entity-card-stats"><span>'+new Set(linked.map(topic=>topic.investigation_id).filter(Boolean)).size+' investigação(ões)</span><span>'+events.length+' acontecimento(s)</span><span>'+connections.length+' relação(ões)</span><span>'+sourceCount+' fonte(s)</span></div>'+editForm+'<details><summary>Ver registros, acontecimentos e fontes</summary><div class="entity-topic-list">'+topicMarkup+'</div></details>'+sourceLink+'</article>';
  }).join("");
 }
 
@@ -112,6 +113,29 @@ entityEl("entity-link-form").addEventListener("submit",async event=>{
  button.disabled=false;
  if(error){entityStatus("entity-link-status","Não foi possível vincular: "+error.message);return;}
  form.reset();entityStatus("entity-link-status","Registro vinculado a "+profile.canonical_name+".");
+ await loadEntityData();
+});
+
+entityEl("entity-directory").addEventListener("submit",async event=>{
+ const form=event.target.closest("[data-edit-profile]");
+ if(!form)return;
+ event.preventDefault();
+ const button=form.querySelector('button[type="submit"]');
+ const rawUrl=form.elements.external_source_url.value.trim();
+ if(rawUrl&&!/^https?:\/\//i.test(rawUrl)){entityStatus("entity-link-status","A fonte precisa começar com http:// ou https://.");return;}
+ button.disabled=true;
+ const {error}=await entityDb.from("entity_profiles").update({
+  entity_type:form.elements.entity_type.value,
+  canonical_name:form.elements.canonical_name.value.trim(),
+  summary:form.elements.summary.value.trim()||null,
+  aliases:form.elements.aliases.value.split(";").map(item=>item.trim()).filter(Boolean),
+  external_identifier:form.elements.external_identifier.value.trim()||null,
+  external_source_url:rawUrl||null,
+  updated_at:new Date().toISOString()
+ }).eq("id",form.dataset.editProfile).eq("user_id",entityUser.id);
+ button.disabled=false;
+ if(error){entityStatus("entity-link-status","Não foi possível atualizar o perfil: "+error.message);return;}
+ entityStatus("entity-link-status","Perfil atualizado.");
  await loadEntityData();
 });
 
