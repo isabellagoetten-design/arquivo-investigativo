@@ -1591,3 +1591,87 @@ input {
     width: 56% !important;
   }
 }
+
+
+/* MOBILE: imagem em tela cheia e somente um formulário visível */
+@media (max-width: 900px) {
+  .access-page {
+    min-height: 100svh !important;
+    height: auto !important;
+    padding: 8px 8px 10px !important;
+    overflow: hidden !important;
+  }
+
+  .brand-header {
+    position: relative !important;
+    z-index: 5 !important;
+    margin: 0 0 2px !important;
+    padding: 0 8px !important;
+  }
+
+  .access-layout {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    height: calc(100svh - 58px) !important;
+    min-height: 650px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+  }
+
+  .visual-panel {
+    position: absolute !important;
+    inset: 0 !important;
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    aspect-ratio: auto !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: url("/arquivo-investigativo/entrada-mobile.png?v=8") center center / 100% 100% no-repeat !important;
+    box-shadow: none !important;
+  }
+
+  .visual-panel > * { display: none !important; }
+
+  .form-panel {
+    position: absolute !important;
+    z-index: 3 !important;
+    top: 43% !important;
+    left: 22% !important;
+    display: flex !important;
+    width: 56% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+  }
+
+  /* O estado oculto nunca pode ocupar espaço ou aparecer duplicado */
+  #form-cadastro[hidden],
+  #account-state[hidden],
+  [hidden] {
+    display: none !important;
+  }
+
+  #auth-forms { display: block !important; }
+  #form-login:not([hidden]) { display: flex !important; }
+  #form-cadastro:not([hidden]) { display: flex !important; }
+
+  .form-footer { display: none !important; }
+}
+
+@media (max-width: 390px) {
+  .form-panel {
+    top: 43% !important;
+    left: 21% !important;
+    width: 58% !important;
+  }
+}
