@@ -33,9 +33,20 @@ form.addEventListener("submit",async event=>{
  if(!record.title||!record.category){status.textContent="Preencha o título e a categoria.";return}
  submit.disabled=true;submit.textContent="Salvando...";
  status.textContent="Salvando sua investigação...";
- const {error}=await client.from("investigations").insert(record);
+ let error=null;
+ try{
+  const result=await client.from("investigations").insert(record);
+  error=result.error;
+ }catch(requestError){
+  error=requestError;
+ }
  submit.disabled=false;submit.innerHTML='Salvar investigação <span>↗</span>';
- if(error){console.error("Erro ao salvar investigação:",error);status.textContent="Não foi possível salvar. Confira se a tabela está configurada no Supabase.";return}
+ if(error){
+  console.error("Erro ao salvar investigação:",error);
+  const details=[error.message,error.code?("Código: "+error.code):null,error.details,error.hint].filter(Boolean).join(" | ");
+  status.textContent="Falha ao salvar: "+(details||"erro inesperado. Tente novamente.");
+  return;
+ }
  closeInvestigationModal();notify("Investigação salva no seu arquivo.");await loadInvestigations();
 });
 async function loadInvestigations(){
