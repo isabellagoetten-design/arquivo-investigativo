@@ -105,7 +105,7 @@ $("knowledge-import-results").addEventListener("click",async event=>{
  if(error||!data){$("knowledge-import-status").textContent="Registro não encontrado.";return;}
  const exists=topics.some(topic=>topic.title.toLocaleLowerCase("pt-BR")===data.label.toLocaleLowerCase("pt-BR"));
  if(exists){$("knowledge-import-status").textContent="Esse conceito já existe no seu Atlas.";return;}
- const description=[data.description,data.payload?.summary].filter(Boolean).join("\\n\\n").slice(0,5000);
+ const description=[data.description,data.payload?.summary].filter(Boolean).join("\n\n").slice(0,5000);
  const saved=await db.from("topics").insert({user_id:user.id,title:data.label,content:description,color:"#9DAD71",position:{x:0,y:0}});
  if(saved.error){$("knowledge-import-status").textContent="Erro ao adicionar: "+saved.error.message;return;}
  button.disabled=true;button.textContent="Adicionado ✓";
