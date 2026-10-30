@@ -86,7 +86,7 @@ Não chamar a função automaticamente em carregamentos de página. Ela deve ser
 ## 4. Estado de integração
 
 - Backend `research-assistant`: publicado, versão 3.
-- Backend `evidence-audit`: publicado, versão 2.
+- Backend `evidence-audit`: publicado, versão 3.
 - Backend `research-structure`: publicado, versão 2.
 - Backend `document-chat`: publicado, versão 9.
 - Migração de busca textual ranqueada: aplicada.
@@ -236,3 +236,40 @@ A ausência de informação em uma fonte não é tratada automaticamente como co
 - Índice para `research_evidence_links.user_id`: criado.
 - Evidências atualmente registradas no banco: 0. A função só produzirá uma comparação depois que houver evidências aprovadas de pelo menos duas fontes.
 - Teste ponta a ponta com sessão real: pendente.
+
+
+## 8. Registro mestre de entidades
+
+**Página:** `entidades.html`
+
+**Objetivo:** manter perfis canônicos pertencentes ao usuário e permitir que vários registros `topics`, inclusive de investigações diferentes, apontem para a mesma entidade confirmada manualmente.
+
+### Modelo de dados
+
+- `entity_profiles`: perfil mestre com tipo, nome principal, resumo, aliases, identificador externo opcional e URL de referência.
+- `topics.entity_profile_id`: vínculo opcional entre um registro local de investigação e um perfil mestre.
+- Uma mesma entidade pode ser associada a vários registros `topics`.
+- A chave estrangeira composta `(entity_profile_id, user_id)` impede que um tópico seja associado ao perfil de outro usuário.
+- A exclusão do perfil é restrita enquanto houver tópicos vinculados, para evitar perda acidental de identidade.
+
+### Fluxo da interface
+
+1. O usuário cria um perfil mestre.
+2. Escolhe explicitamente um perfil e um registro de investigação ainda não vinculado.
+3. O vínculo é salvo sem copiar nem sobrescrever o conteúdo do tópico.
+4. A página reúne os registros relacionados, investigações, acontecimentos associados, conexões e fontes disponíveis.
+5. O usuário pode desfazer um vínculo sem excluir o perfil nem o registro original.
+
+### Tipos de entidade
+
+`person`, `organization`, `place`, `event`, `concept` e `other`.
+
+**Regra de integridade:** não há fusão automática por semelhança de nomes. Homônimos podem representar entidades diferentes; a associação exige decisão explícita do usuário.
+
+### Segurança e estado
+
+- RLS habilitada em `entity_profiles`, com políticas de leitura, criação, atualização e exclusão por proprietário.
+- Acesso anônimo à tabela revogado; permissões concedidas apenas a `authenticated`.
+- Perfis existentes em `people_profiles` não são migrados automaticamente, pois são fichas biográficas antigas e podem conter metadados inconsistentes.
+- A tabela começa vazia; perfis e associações precisam ser criados pelo usuário.
+- Teste ponta a ponta no navegador: pendente.
