@@ -1,4 +1,4 @@
-const CACHE_NAME = "arquivo-investigativo-v50";
+const CACHE_NAME = "arquivo-investigativo-v51";
 
 const FILES_TO_CACHE = [
   "./",
@@ -35,6 +35,7 @@ const FILES_TO_CACHE = [
   "./css/inicio.css",
   "./js/inicio.js",
   "./css/main.css",
+  "./css/mobile-fix.css",
   "./css/conhecimento.css",
   "./js/conhecimento.js",
   "./css/navigation.css",
