@@ -205,6 +205,14 @@ Deno.serve(withSupabase({ auth: "user" }, async (req, ctx) => {
       source_count: new Set(auditEvidence.map((item: any) => item.source_id)).size,
       overall_summary: String(parsed.overall_summary ?? "").slice(0, 1800),
       possible_conflicts: issues,
+      evidence_index: auditEvidence.map((item: any) => ({
+        evidence_id: item.evidence_id,
+        source_title: item.source_title,
+        source_url: item.source_url,
+        reference_number: item.reference_number,
+        target: item.target,
+        evidence_summary: item.evidence_summary
+      })),
       corroborations: (Array.isArray(parsed.corroborations) ? parsed.corroborations : []).slice(0, 20).map((item: unknown) => String(item).slice(0, 700)),
       coverage_gaps: (Array.isArray(parsed.coverage_gaps) ? parsed.coverage_gaps : []).slice(0, 20).map((item: unknown) => String(item).slice(0, 700)),
       requires_human_review: true,
