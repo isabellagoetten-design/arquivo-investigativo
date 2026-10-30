@@ -1,6 +1,6 @@
 const SUPABASE_URL="https://hoqbkpjwlmkmdvuzinyi.supabase.co",SUPABASE_KEY="sb_publishable_fuFitarIu9yHJ_QPsRUP-Q_xVGJMcbg";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY),$=id=>document.getElementById(id);let user=null,events=[],editingId=null;
-function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;',"'":"&#39;"}[c]))}
+function esc(v){return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[c]))}
 function dateLabel(value){const [y,m,d]=value.split("-").map(Number);return new Date(y,m-1,d).toLocaleDateString("pt-BR",{day:"2-digit",month:"long",year:"numeric"})}
 function openEditor(item){editingId=item?.id||null;$("event-form").reset();$("editor-title").textContent=item?"Editar acontecimento":"Adicionar acontecimento";const f=$("event-form").elements;if(item){f.title.value=item.title;f.event_date.value=item.event_date;f.category.value=item.category||"";f.description.value=item.description||"";f.source_url.value=item.source_url||""} $("event-editor").hidden=false;f.title.focus()}
 function closeEditor(){$("event-editor").hidden=true;editingId=null;$("event-form").reset();$("event-status").textContent=""}
