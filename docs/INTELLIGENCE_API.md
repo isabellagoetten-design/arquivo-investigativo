@@ -1,6 +1,6 @@
 # API de Inteligência e Pesquisa
 
-Este documento descreve as funções de backend da frente de Inteligência, Pesquisa e Dados. As funções exigem sessão Supabase autenticada (verify_jwt: true). A chave Gemini permanece exclusivamente no ambiente das Edge Functions.
+Este documento descreve as funções de backend da frente de Inteligência, Pesquisa e Dados. As funções exigem sessão Supabase autenticada (verify_jwt: true). A chave Gemini permanece exclusivamente no ambiente das Edge Functions. As funções usam o modelo `gemini-3.8-flash` e a configuração de geração compatível com essa versão da API.
 
 ## 1. Pesquisa web fundamentada
 
@@ -85,8 +85,9 @@ Não chamar a função automaticamente em carregamentos de página. Ela deve ser
 
 ## 4. Estado de integração
 
-- Backend `research-assistant`: publicado, versão 2.
-- Backend `document-chat`: publicado, versão 8.
+- Backend `research-assistant`: publicado, versão 3.
+- Backend `research-structure`: publicado, versão 2.
+- Backend `document-chat`: publicado, versão 9.
 - Migração de busca textual ranqueada: aplicada.
 - Interface do dossiê conectada a `research-assistant`: implementada.
 - Interface de revisão conectada a `research-structure`: implementada.
