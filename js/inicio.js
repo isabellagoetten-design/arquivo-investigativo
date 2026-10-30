@@ -65,10 +65,6 @@ document.getElementById("home-logout").addEventListener("click",async()=>{
  if(error){notify("Não foi possível sair da conta.");return}
  window.location.replace("./index.html");
 });
-document.querySelectorAll("[data-coming]:not([data-coming='Nova investigação'])").forEach(button=>button.addEventListener("click",event=>{
- event.preventDefault();notify(button.dataset.coming+" será desenvolvido nas próximas etapas.");
-}));
-document.getElementById("profile-button").addEventListener("click",()=>notify("Área da conta será ampliada em uma próxima etapa."));
 client.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session)window.location.replace("./index.html")});
 protectPage();
 if("serviceWorker"in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(console.error))}
