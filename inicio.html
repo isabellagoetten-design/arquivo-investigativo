@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#4E0A0B">
+  <meta name="description" content="Seu espaço pessoal de pesquisa e descobertas.">
+  <title>Meu Arquivo | Arquivo Investigativo</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=DM+Serif+Display&family=Anton&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./css/main.css?v=28">
+  <link rel="stylesheet" href="./css/inicio.css?v=1">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" type="image/png" href="./icons/icon-192.png">
+</head>
+<body class="home-page">
+  <div class="home-shell">
+    <aside class="side-nav">
+      <a class="home-brand" href="./inicio.html">
+        <img src="./icons/icon-192.png" alt="">
+        <span>ARQUIVO<br>INVESTIGATIVO</span>
+      </a>
+      <p class="nav-caption">ESPAÇO DE INVESTIGAÇÃO</p>
+      <nav aria-label="Navegação principal">
+        <a class="nav-link active" href="./inicio.html"><span>⌂</span> Visão geral</a>
+        <a class="nav-link" href="#" data-coming="Atlas"><span>✳</span> Atlas</a>
+        <a class="nav-link" href="#" data-coming="Explorar"><span>⌕</span> Explorar</a>
+        <a class="nav-link" href="#" data-coming="Laboratório"><span>▧</span> Laboratório</a>
+        <a class="nav-link" href="#" data-coming="Máquina do Tempo"><span>◷</span> Máquina do Tempo</a>
+        <a class="nav-link" href="#" data-coming="Biblioteca"><span>▤</span> Biblioteca</a>
+        <a class="nav-link" href="#" data-coming="Meu Arquivo"><span>▣</span> Meu Arquivo</a>
+      </nav>
+      <div class="side-bottom">
+        <div class="side-note"><span>✦</span><p>Uma boa pergunta pode abrir um arquivo inteiro.</p></div>
+        <button id="home-logout" class="logout-button">↪ Sair da conta</button>
+      </div>
+    </aside>
+
+    <main class="home-main">
+      <header class="home-topbar">
+        <div class="breadcrumb">ARQUIVO PESSOAL <span>/</span> VISÃO GERAL</div>
+        <div class="top-actions">
+          <button class="icon-action" type="button" aria-label="Pesquisar" data-coming="Pesquisa rápida">⌕</button>
+          <button class="profile-chip" type="button" id="profile-button"><span class="profile-avatar">A</span><span id="profile-email">Minha conta</span></button>
+        </div>
+      </header>
+
+      <section class="welcome-block">
+        <div>
+          <p class="eyebrow"><span></span> SEU ESPAÇO DE DESCOBERTAS</p>
+          <h1>O que vamos <em>investigar</em> hoje?</h1>
+          <p class="welcome-copy">Reúna pistas, conecte ideias e transforme curiosidade em conhecimento.</p>
+        </div>
+        <div class="welcome-stamp" aria-hidden="true"><span>AI</span><small>ARQUIVO<br>Nº 001</small></div>
+      </section>
+
+      <section class="quick-actions" aria-label="Ações rápidas">
+        <button class="quick-card quick-primary" type="button" data-coming="Nova investigação">
+          <span class="quick-symbol">＋</span><span><strong>Nova investigação</strong><small>Comece um novo dossiê</small></span><b>↗</b>
+        </button>
+        <button class="quick-card" type="button" data-coming="Adicionar fonte">
+          <span class="quick-symbol source-symbol">↗</span><span><strong>Adicionar fonte</strong><small>Guarde um link ou documento</small></span><b>↗</b>
+        </button>
+        <button class="quick-card" type="button" data-coming="Abrir mural">
+          <span class="quick-symbol mural-symbol">▧</span><span><strong>Abrir mural</strong><small>Organize ideias visualmente</small></span><b>↗</b>
+        </button>
+      </section>
+
+      <div class="content-grid">
+        <section class="recent-section">
+          <div class="section-heading"><div><p class="eyebrow">SEU TRABALHO</p><h2>Investigações recentes</h2></div><button class="text-link" type="button" data-coming="Meu Arquivo">Ver arquivo ↗</button></div>
+          <div class="empty-investigation">
+            <div class="empty-illustration"><span class="paper paper-back"></span><span class="paper paper-front">?</span><i>✳</i></div>
+            <div><h3>Seu próximo assunto começa aqui.</h3><p>Quando você criar uma investigação, ela aparecerá neste espaço para continuar de onde parou.</p><button class="outline-button" type="button" data-coming="Nova investigação">Criar primeira investigação <span>＋</span></button></div>
+          </div>
+        </section>
+
+        <aside class="right-column">
+          <section class="note-widget">
+            <div class="widget-top"><span class="widget-label">ANOTAÇÃO RÁPIDA</span><span>✳</span></div>
+            <h3>Uma ideia passando pela cabeça?</h3>
+            <p>Este espaço poderá guardar pensamentos soltos para você organizar depois.</p>
+            <button type="button" data-coming="Anotação rápida">Escrever uma nota ↗</button>
+          </section>
+          <section class="library-widget">
+            <div class="widget-top"><span class="widget-label">CAIXA DE FERRAMENTAS</span><span>⌁</span></div>
+            <h3>Seu arquivo, suas ferramentas.</h3>
+            <ul><li><span>▤</span> Fontes e documentos</li><li><span>⌘</span> Mapas e conexões</li><li><span>◷</span> Linhas do tempo</li></ul>
+            <small>Os espaços serão ativados por etapas.</small>
+          </section>
+        </aside>
+      </div>
+      <footer class="home-footer"><span>ARQUIVO INVESTIGATIVO</span><span>UM ESPAÇO PARA PERGUNTAR, PESQUISAR E CONECTAR.</span></footer>
+    </main>
+  </div>
+  <div id="home-toast" class="home-toast" role="status" aria-live="polite"></div>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="./js/inicio.js"></script>
+</body>
+</html>
