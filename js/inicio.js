@@ -72,3 +72,5 @@ document.getElementById("profile-button").addEventListener("click",()=>notify("Ã
 client.auth.onAuthStateChange((event,session)=>{if(event==="SIGNED_OUT"||!session)window.location.replace("./index.html")});
 protectPage();
 if("serviceWorker"in navigator){window.addEventListener("load",()=>navigator.serviceWorker.register("./service-worker.js").catch(console.error))}
+
+document.getElementById("quick-add-source")?.addEventListener("click",()=>{window.location.href="./biblioteca.html"});
