@@ -124,7 +124,7 @@ Deno.serve(withSupabase({ auth: "user" }, async (req, ctx) => {
         headers: { "Content-Type": "application/json", "x-goog-api-key": apiKey },
         body: JSON.stringify({
           contents: [{ role: "user", parts: [{ text: prompt }] }],
-          generationConfig: { temperature: 0.1, maxOutputTokens: 3000, responseMimeType: "application/json", responseSchema: schema },
+          generationConfig: { maxOutputTokens: 3000, responseMimeType: "application/json", responseSchema: schema },
         }),
         signal: controller.signal,
       });
