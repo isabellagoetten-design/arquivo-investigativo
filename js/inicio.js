@@ -56,7 +56,8 @@ async function loadInvestigations(){
  const container=document.querySelector(".empty-investigation");
  if(!container)return;
  if(!data||data.length===0){return}
- container.innerHTML=data.map(item=>`<article class="investigation-item"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description||item.subject||"Investigação em andamento.")}</p><div class="investigation-meta"><span>${escapeHtml(item.category)}</span><span>${new Date(item.created_at).toLocaleDateString("pt-BR")}</span></div></article>`).join("");
+ container.innerHTML=data.map(item=>`<button class="investigation-item" type="button" data-investigation-id="${escapeHtml(item.id)}"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description||item.subject||"Investigação em andamento.")}</p><span class="investigation-meta"><span>${escapeHtml(item.category)}</span><span>${new Date(item.created_at).toLocaleDateString("pt-BR")}</span></span><span class="item-open">Abrir investigação ↗</span></button>`).join("");
+ container.querySelectorAll("[data-investigation-id]").forEach(button=>button.addEventListener("click",()=>{window.location.href="./investigacao.html?id="+encodeURIComponent(button.dataset.investigationId)}));
 }
 function escapeHtml(value){return String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]))}
 document.getElementById("home-logout").addEventListener("click",async()=>{
