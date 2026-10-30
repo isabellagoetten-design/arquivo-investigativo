@@ -2,3 +2,13 @@
 
 /* REFINO VISUAL · IDENTIDADE EDITORIAL */
 .atlas-page{background:#f6f0e7;background-image:radial-gradient(#6b45300d .7px,transparent .7px);background-size:6px 6px}.atlas-shell{max-width:1240px;padding:32px clamp(18px,5vw,66px) 80px}.atlas-header{border-color:#cbb9a8}.atlas-header a{background:#4e0a0b;color:#fffaf2;padding:10px 14px;border-radius:2px 9px 2px 7px}.atlas-intro{padding:60px 0 42px}.atlas-intro h1{font-size:clamp(58px,8vw,88px);letter-spacing:-2px}.atlas-intro h1 span{color:#ea6993}.atlas-seal{background:#f4db9a;border:2px solid #4e0a0b;box-shadow:5px 5px 0 #4e0a0b}.atlas-stats{border-color:#cbb9a8}.atlas-connect{border-radius:2px 15px 3px 12px;box-shadow:6px 7px 0 #4e0a0b12}.atlas-connect h2{font-size:31px}.atlas-map{gap:20px}.atlas-node{border:1px solid #d7c3ae;border-radius:2px 13px 3px 10px;box-shadow:4px 5px 0 #4e0a0b12;transform:rotate(-.35deg)}.atlas-node:nth-child(even){transform:rotate(.45deg);background:#f4e5dc}.atlas-node:before{color:#ea6993}.atlas-node h3{font-size:23px}.relation-row{border-color:#d7c8b8}.atlas-empty{background:#fffaf1;border:1px dashed #cbb9a8}@media(max-width:650px){.atlas-intro{padding:40px 0 28px}.atlas-seal{width:74px;height:74px;font-size:21px}.atlas-stats{gap:20px}.atlas-node{transform:none!important}}
+/* ATLAS EM REDE */
+.atlas-map{display:block;position:relative;isolation:isolate;min-height:590px;aspect-ratio:1000/650;overflow:hidden;border:1px solid #d8c8b7;border-radius:4px 18px 4px 12px;background-color:#fbf7ef;background-image:radial-gradient(#9b806322 1px,transparent 1px),linear-gradient(135deg,#fffaf2,#f3e9dc);background-size:19px 19px,100% 100%;box-shadow:inset 0 0 45px #8d6b3510,6px 7px 0 #4e0a0b10}
+.atlas-lines{position:absolute;inset:0;width:100%;height:100%;z-index:0}
+.atlas-lines line{stroke:#b66f78;stroke-width:3;stroke-dasharray:8 7;opacity:.85}
+.atlas-node-layer{position:absolute;inset:0;z-index:1}
+.atlas-node{position:absolute;left:50%;top:50%;width:clamp(132px,18vw,190px);min-height:110px;padding:15px 14px;border:1px solid #d7c3ae;border-top:5px solid var(--node-color)!important;border-radius:2px 12px 3px 9px;background:#fffdf7;box-shadow:4px 5px 0 #4e0a0b18;transform:translate(-50%,-50%) rotate(-1deg)}
+.atlas-node:nth-child(even){transform:translate(-50%,-50%) rotate(1deg);background:#f8e9e1}
+.atlas-node:before{color:var(--node-color)}
+.atlas-node h3{font-size:19px;overflow-wrap:anywhere}
+@media(max-width:650px){.atlas-map{min-height:640px;aspect-ratio:auto}.atlas-node{width:clamp(126px,39vw,155px);padding:12px 10px;min-height:105px}.atlas-node h3{font-size:16px}.atlas-lines line{stroke-width:4;stroke-dasharray:6 7}}
