@@ -300,3 +300,12 @@ A ausência de informação em uma fonte não é tratada automaticamente como co
 - RLS protege as três tabelas por proprietário e valida que a investigação associada também pertence ao usuário; os vínculos de evidência são limitados à mesma investigação.
 - Índices cobrem as chaves estrangeiras compostas do histórico para evitar varreduras desnecessárias. A exclusão da investigação remove seu histórico em cascata.
 - O histórico é exibido no painel do dossiê, com fontes e resumos vinculados.
+
+
+### Verificação adicional do histórico (30/10/2026)
+
+- Parser JavaScript do arquivo `js/investigacao.js`: aprovado.
+- Contrato entre IDs HTML, seletores JavaScript e RPC: conferido.
+- Transação autenticada: RPC gravou um apontamento com dois vínculos de evidência; a atualização para `confirmed_by_researcher` foi confirmada na mesma transação.
+- A transação foi revertida; nenhum registro de teste permaneceu.
+- Teste ponta a ponta no navegador autenticado: pendente. A verificação SQL não substitui a confirmação do fluxo visual na aplicação publicada.
