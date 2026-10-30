@@ -161,4 +161,43 @@ $("#save-proposals")?.addEventListener("click",async()=>{
  await loadRecords();
 });
 
+
+const auditTypeLabels={direct_contradiction:"Contradição direta",factual_discrepancy:"Divergência factual",chronology_inconsistency:"Inconsistência cronológica",unsupported_claim:"Afirmação sem apoio suficiente",corroboration:"Corroboração",source_dependence:"Possível dependência entre fontes"};
+const auditEvidenceById=new Map();
+function renderEvidenceAudit(data){
+ const root=$("#evidence-audit-results");
+ if(data.status==="insufficient_evidence"){
+  root.hidden=true;
+  $("#evidence-audit-status").textContent=data.message+" ("+(data.evidence_count||0)+" vínculo(s), "+(data.source_count||0)+" fonte(s)).";
+  return;
+ }
+ auditEvidenceById.clear();
+ (data.evidence_index||[]).forEach(item=>auditEvidenceById.set(item.evidence_id,item));
+ $("#evidence-audit-summary").textContent=data.overall_summary||"A comparação não retornou uma síntese.";
+ const issues=data.possible_conflicts||[];
+ $("#evidence-audit-issues").innerHTML=issues.length?issues.map(item=>{
+  const refs=(item.evidence_ids||[]).map(id=>{
+   const ev=auditEvidenceById.get(id);if(!ev)return "";
+   const link=ev.source_url&&/^https?:\/\//i.test(ev.source_url)?'<a href="'+safeText(ev.source_url)+'" target="_blank" rel="noopener noreferrer">'+safeText(ev.source_title)+'</a>':safeText(ev.source_title);
+   return '<div class="audit-evidence"><strong>'+link+'</strong><small>'+safeText(ev.target||"Registro relacionado")+' · Referência ['+safeText(ev.reference_number)+']</small><p>'+safeText(ev.evidence_summary||"Sem resumo associado.")+'</p></div>';
+  }).join("");
+  return '<article class="audit-issue"><div class="audit-issue-head"><span class="audit-type">'+safeText(auditTypeLabels[item.issue_type]||"Ponto para revisão")+'</span><span class="audit-type audit-severity-'+safeText(item.severity)+'">'+safeText(item.severity)+'</span><strong>'+safeText(item.title)+'</strong></div><p>'+safeText(item.explanation)+'</p>'+refs+'<p><strong>Próxima verificação:</strong> '+safeText(item.next_step)+'</p></article>';
+ }).join(""):'<p class="record-empty">Nenhum conflito ou divergência foi sinalizado nos resumos analisados. Isso não prova que as fontes concordem integralmente.</p>';
+ const renderList=(selector,title,items)=>{const el=$(selector);el.innerHTML=items?.length?'<h5>'+title+'</h5><ul>'+items.map(x=>'<li>'+safeText(x)+'</li>').join("")+'</ul>':"";};
+ renderList("#evidence-audit-corroborations","Possíveis corroborações",data.corroborations||[]);
+ renderList("#evidence-audit-gaps","Lacunas de cobertura",data.coverage_gaps||[]);
+ root.hidden=false;
+ $("#evidence-audit-status").textContent="Comparação concluída com "+data.evidence_count+" vínculo(s) de evidência e "+data.source_count+" fonte(s). Revisão humana obrigatória.";
+}
+$("#run-evidence-audit")?.addEventListener("click",async()=>{
+ const button=$("#run-evidence-audit");button.disabled=true;
+ $("#evidence-audit-status").textContent="Comparando as evidências já salvas...";
+ $("#evidence-audit-results").hidden=true;
+ const {data,error}=await client.functions.invoke("evidence-audit",{body:{investigation_id:id}});
+ button.disabled=false;
+ if(error||!data){$("#evidence-audit-status").textContent="Não foi possível comparar as evidências: "+(data?.error||error?.message||"resposta inválida");return;}
+ if(data.error){$("#evidence-audit-status").textContent=data.error;return;}
+ renderEvidenceAudit(data);
+});
+
 init().then(async()=>{if(uid){await loadRecords();await loadPdfDocuments();}});
