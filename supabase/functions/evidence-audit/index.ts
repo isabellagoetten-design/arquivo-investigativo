@@ -82,16 +82,23 @@ Deno.serve(withSupabase({ auth: "user" }, async (req, ctx) => {
       });
     }
 
-    const topicIds = [...new Set(evidence.map((item: any) => item.topic_id).filter(Boolean))];
+    const initialTopicIds = evidence.map((item: any) => item.topic_id).filter(Boolean);
     const eventIds = [...new Set(evidence.map((item: any) => item.timeline_event_id).filter(Boolean))];
     const connectionIds = [...new Set(evidence.map((item: any) => item.connection_id).filter(Boolean))];
 
-    const [sourceResult, topicResult, eventResult, connectionResult] = await Promise.all([
+    const [sourceResult, eventResult, connectionResult] = await Promise.all([
       ctx.supabase.from("sources").select("id,title,url,author,source_type").eq("user_id", userId).eq("investigation_id", investigationId).in("id", sourceIds),
-      topicIds.length ? ctx.supabase.from("topics").select("id,title,content,entity_type,confidence").eq("user_id", userId).eq("investigation_id", investigationId).in("id", topicIds) : Promise.resolve({ data: [], error: null }),
       eventIds.length ? ctx.supabase.from("timeline_events").select("id,title,event_date,date_label,date_precision,description,confidence").eq("user_id", userId).eq("investigation_id", investigationId).in("id", eventIds) : Promise.resolve({ data: [], error: null }),
       connectionIds.length ? ctx.supabase.from("connections").select("id,source_topic_id,target_topic_id,label").eq("user_id", userId).in("id", connectionIds) : Promise.resolve({ data: [], error: null })
     ]);
+    const relatedTopicIds = [
+      ...initialTopicIds,
+      ...(connectionResult.data ?? []).flatMap((item: any) => [item.source_topic_id, item.target_topic_id])
+    ];
+    const topicIds = [...new Set(relatedTopicIds.filter(Boolean))];
+    const topicResult = topicIds.length
+      ? await ctx.supabase.from("topics").select("id,title,content,entity_type,confidence").eq("user_id", userId).eq("investigation_id", investigationId).in("id", topicIds)
+      : { data: [], error: null };
 
     const queryError = sourceResult.error || topicResult.error || eventResult.error || connectionResult.error;
     if (queryError) {
