@@ -1427,3 +1427,167 @@ input {
   .form-panel::before, .form-panel::after { display: none !important; }
   .form-panel .auth-form, .form-panel .auth-form input, .form-panel .primary-button { width: 100% !important; max-width: 100% !important; min-width: 0 !important; box-sizing: border-box !important; }
 }
+
+
+/* MOBILE APP ENTRY: arte como tela de fundo e login encaixado no caderno */
+@media (max-width: 900px) {
+  .access-page {
+    width: 100% !important;
+    min-height: 100svh !important;
+    padding: 8px 10px 12px !important;
+    overflow: hidden !important;
+  }
+
+  .brand-header {
+    margin: 0 0 4px !important;
+    padding: 0 8px !important;
+  }
+
+  .brand {
+    gap: 8px !important;
+    font-size: 15px !important;
+  }
+
+  .brand-icon {
+    width: 34px !important;
+    height: 34px !important;
+  }
+
+  .access-layout {
+    position: relative !important;
+    display: block !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  .visual-panel {
+    display: block !important;
+    position: relative !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 0.60 / 1 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: url("/arquivo-investigativo/entrada-mobile.png?v=7") center top / 100% auto no-repeat !important;
+    box-shadow: none !important;
+  }
+
+  .visual-panel > * {
+    display: none !important;
+  }
+
+  .form-panel {
+    position: absolute !important;
+    z-index: 2 !important;
+    top: 48vw !important;
+    left: 23% !important;
+    display: flex !important;
+    width: 54% !important;
+    max-width: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+    gap: 0 !important;
+  }
+
+  .form-panel::before,
+  .form-panel::after {
+    display: none !important;
+  }
+
+  .form-topline {
+    margin: 0 0 5px !important;
+    font-size: 9px !important;
+    letter-spacing: 1.3px !important;
+  }
+
+  .form-heading {
+    margin: 0 0 8px !important;
+  }
+
+  .form-heading h1 {
+    margin: 0 0 3px !important;
+    font-size: clamp(23px, 6vw, 34px) !important;
+    line-height: 1 !important;
+  }
+
+  .form-heading p {
+    margin: 0 !important;
+    font-size: clamp(10px, 2.8vw, 14px) !important;
+    line-height: 1.2 !important;
+  }
+
+  .auth-form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 6px !important;
+  }
+
+  .auth-form label {
+    font-size: clamp(9px, 2.5vw, 12px) !important;
+  }
+
+  .auth-form input {
+    width: 100% !important;
+    height: clamp(31px, 8vw, 42px) !important;
+    min-width: 0 !important;
+    padding: 0 8px !important;
+    border: 1px solid #bba99a !important;
+    border-radius: 3px !important;
+    background: #fffaf0eF !important;
+    box-sizing: border-box !important;
+    font-size: clamp(10px, 2.8vw, 13px) !important;
+  }
+
+  .label-row {
+    margin-top: 0 !important;
+    gap: 4px !important;
+  }
+
+  .text-button {
+    font-size: clamp(8px, 2.3vw, 11px) !important;
+  }
+
+  .primary-button {
+    width: 100% !important;
+    min-height: clamp(34px, 8.5vw, 44px) !important;
+    margin-top: 3px !important;
+    padding: 6px 9px !important;
+    border-radius: 4px !important;
+    font-size: clamp(11px, 3vw, 14px) !important;
+  }
+
+  .switch-prompt {
+    margin: 7px 0 0 !important;
+    font-size: clamp(8px, 2.3vw, 11px) !important;
+    line-height: 1.3 !important;
+  }
+
+  .form-footer {
+    margin: 10px 8px 0 !important;
+    padding-top: 7px !important;
+    gap: 7px !important;
+    font-size: 8px !important;
+  }
+
+  .footer-mark {
+    font-size: 19px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .form-panel {
+    top: 47vw !important;
+    left: 22% !important;
+    width: 56% !important;
+  }
+}
