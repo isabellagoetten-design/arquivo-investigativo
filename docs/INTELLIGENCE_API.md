@@ -231,7 +231,7 @@ A ausência de informação em uma fonte não é tratada automaticamente como co
 ### Estado desta etapa
 
 - Edge Function `evidence-audit`: publicada, versão 3.
-- Painel de auditoria cruzada no dossiê: implementado.
+- Livro de evidências no dossiê: implementado, com origem, referência, destino e resumo associado.\n- Painel de auditoria cruzada no dossiê: implementado.
 - RLS e permissões da tabela de evidências: acesso anônimo revogado e atualização direta bloqueada.
 - Índice para `research_evidence_links.user_id`: criado.
 - Evidências atualmente registradas no banco: 0. A função só produzirá uma comparação depois que houver evidências aprovadas de pelo menos duas fontes.
