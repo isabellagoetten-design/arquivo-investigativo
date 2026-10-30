@@ -2,7 +2,7 @@ const ENTITIES_URL="https://hoqbkpjwlmkmdvuzinyi.supabase.co";
 const ENTITIES_KEY="sb_publishable_fuFitarIu9yHJ_QPsRUP-Q_xVGJMcbg";
 const entityDb=window.supabase.createClient(ENTITIES_URL,ENTITIES_KEY);
 const entityEl=id=>document.getElementById(id);
-let entityUser=null,entityProfiles=[],entityTopics=[],entityInvestigations=[],entityEvents=[],entityConnections=[],entitySources=[],entityEvidence=[];
+let entityUser=null,entityProfiles=[],entityTopics=[],entityInvestigations=[],entityConnections=[],entitySources=[],entityEvidence=[];
 
 const entityTypes={person:"Pessoa",organization:"Organização",place:"Lugar",event:"Acontecimento",concept:"Conceito",other:"Outro"};
 function entitySafe(value){return String(value??"").replace(/[&<>"']/g,char=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[char]));}
@@ -22,7 +22,6 @@ async function loadEntityData(){
   entityDb.from("entity_profiles").select("id,entity_type,canonical_name,summary,aliases,external_identifier,external_source_url,created_at").eq("user_id",entityUser.id).order("canonical_name"),
   entityDb.from("topics").select("id,title,content,entity_type,confidence,investigation_id,entity_profile_id").eq("user_id",entityUser.id).order("title"),
   entityDb.from("investigations").select("id,title").eq("user_id",entityUser.id).order("title"),
-  entityDb.from("timeline_events").select("id,title,event_date,date_label,date_precision,description,topic_id,investigation_id").eq("user_id",entityUser.id),
   entityDb.from("connections").select("id,source_topic_id,target_topic_id,label").eq("user_id",entityUser.id),
   entityDb.from("sources").select("id,title,url,topic_id,investigation_id").eq("user_id",entityUser.id),
   entityDb.from("research_evidence_links").select("id,source_id,reference_number,topic_id,timeline_event_id,connection_id,evidence_excerpt,confidence,investigation_id").eq("user_id",entityUser.id)
@@ -32,7 +31,7 @@ async function loadEntityData(){
   entityEl("entity-directory").innerHTML='<p class="entity-empty">Não foi possível carregar os dados: '+entitySafe(firstError.error.message)+'</p>';
   return;
  }
- [entityProfiles,entityTopics,entityInvestigations,entityEvents,entityConnections,entitySources,entityEvidence]=queries.map(result=>result.data||[]);
+ [entityProfiles,entityTopics,entityInvestigations,entityConnections,entitySources,entityEvidence]=queries.map(result=>result.data||[]);
  fillEntitySelectors();
  renderEntityDirectory();
 }
@@ -59,24 +58,22 @@ function renderEntityDirectory(){
  directory.innerHTML=entityProfiles.map(profile=>{
   const linked=entityTopics.filter(topic=>topic.entity_profile_id===profile.id);
   const linkedIds=new Set(linked.map(topic=>topic.id));
-  const events=entityEvents.filter(event=>event.topic_id&&linkedIds.has(event.topic_id));
   const connections=entityConnections.filter(connection=>linkedIds.has(connection.source_topic_id)||linkedIds.has(connection.target_topic_id));
   const sourceIds=new Set(entitySources.filter(source=>source.topic_id&&linkedIds.has(source.topic_id)).map(source=>source.id));
   entityEvidence.filter(item=>item.topic_id&&linkedIds.has(item.topic_id)).forEach(item=>sourceIds.add(item.source_id));
   const sourceCount=sourceIds.size;
   const topicMarkup=linked.length?linked.map(topic=>{
    const investigation=investigationMap.get(topic.investigation_id);
-   const relatedEvents=events.filter(event=>event.topic_id===topic.id);
    const relatedSources=entitySources.filter(source=>source.topic_id===topic.id);
    const relatedEvidence=entityEvidence.filter(item=>item.topic_id===topic.id);
    const refs=[...relatedSources.map(source=>({title:source.title,url:source.url})),...relatedEvidence.map(item=>({title:sourceMap.get(item.source_id)?.title||"Fonte associada",url:sourceMap.get(item.source_id)?.url,reference:item.reference_number}))];
    const uniqueRefs=[...new Map(refs.map(ref=>[(ref.title||"")+":"+(ref.reference||""),ref])).values()];
-   return '<div class="entity-topic"><strong>'+entitySafe(topic.title)+'</strong><small>'+entitySafe(investigation?.title||"Registro sem investigação vinculada")+' · '+entitySafe(entityTypes[topic.entity_type]||topic.entity_type||"Tipo não definido")+' · confiança '+entitySafe(topic.confidence||"não informada")+'</small>'+(relatedEvents.length?'<small>'+relatedEvents.length+' acontecimento(s) relacionado(s)</small>':'')+(uniqueRefs.length?'<small>'+uniqueRefs.slice(0,5).map(ref=>ref.url&&/^https?:\/\//i.test(ref.url)?'<a href="'+entitySafe(ref.url)+'" target="_blank" rel="noopener noreferrer">'+entitySafe(ref.title)+'</a>':entitySafe(ref.title)).join(" · ")+'</small>':'')+'<div class="entity-topic-actions"><button type="button" data-unlink-topic="'+topic.id+'">Desvincular deste perfil</button></div></div>';
+   return '<div class="entity-topic"><strong>'+entitySafe(topic.title)+'</strong><small>'+entitySafe(investigation?.title||"Registro sem investigação vinculada")+' · '+entitySafe(entityTypes[topic.entity_type]||topic.entity_type||"Tipo não definido")+' · confiança '+entitySafe(topic.confidence||"não informada")+'</small>'+(uniqueRefs.length?'<small>'+uniqueRefs.slice(0,5).map(ref=>ref.url&&/^https?:\/\//i.test(ref.url)?'<a href="'+entitySafe(ref.url)+'" target="_blank" rel="noopener noreferrer">'+entitySafe(ref.title)+'</a>':entitySafe(ref.title)).join(" · ")+'</small>':'')+'<div class="entity-topic-actions"><button type="button" data-unlink-topic="'+topic.id+'">Desvincular deste perfil</button></div></div>';
   }).join(""):'<p class="entity-empty">Nenhum registro de investigação vinculado a este perfil.</p>';
   const aliases=Array.isArray(profile.aliases)?profile.aliases.filter(Boolean):[];
   const sourceLink=profile.external_source_url&&/^https?:\/\//i.test(profile.external_source_url)?'<a class="entity-card-source" href="'+entitySafe(profile.external_source_url)+'" target="_blank" rel="noopener noreferrer">Fonte de identificação ↗</a>':"";
   const editForm='<details class="entity-edit-details"><summary>Editar identificação</summary><form class="entity-edit-form" data-edit-profile="'+profile.id+'"><label>Tipo<select name="entity_type">'+Object.entries(entityTypes).map(([key,label])=>'<option value="'+key+'"'+(profile.entity_type===key?' selected':'')+'>'+label+'</option>').join("")+'</select></label><label>Nome principal<input name="canonical_name" maxlength="180" required value="'+entitySafe(profile.canonical_name)+'"></label><label>Resumo<textarea name="summary" rows="3" maxlength="1200">'+entitySafe(profile.summary||"")+'</textarea></label><label>Aliases separados por ponto e vírgula<input name="aliases" maxlength="500" value="'+entitySafe(aliases.join("; "))+'"></label><label>Identificador externo<input name="external_identifier" maxlength="160" value="'+entitySafe(profile.external_identifier||"")+'"></label><label>URL de referência<input name="external_source_url" type="url" maxlength="1000" value="'+entitySafe(profile.external_source_url||"")+'"></label><button type="submit">Salvar alterações</button></form></details>';
-  return '<article class="entity-card" data-entity-card="'+profile.id+'"><div class="entity-card-top"><span class="entity-type">'+entitySafe(entityTypes[profile.entity_type]||"Outro")+'</span><span class="entity-type">'+linked.length+' vínculo(s)</span></div><h3>'+entitySafe(profile.canonical_name)+'</h3><p class="entity-card-summary">'+entitySafe(profile.summary||"Sem resumo de identificação.")+'</p>'+(aliases.length?'<small>Também conhecido como: '+aliases.map(entitySafe).join(", ")+'</small>':'')+'<div class="entity-card-stats"><span>'+new Set(linked.map(topic=>topic.investigation_id).filter(Boolean)).size+' investigação(ões)</span><span>'+events.length+' acontecimento(s)</span><span>'+connections.length+' relação(ões)</span><span>'+sourceCount+' fonte(s)</span></div>'+editForm+'<details><summary>Ver registros, acontecimentos e fontes</summary><div class="entity-topic-list">'+topicMarkup+'</div></details>'+sourceLink+'</article>';
+  return '<article class="entity-card" data-entity-card="'+profile.id+'"><div class="entity-card-top"><span class="entity-type">'+entitySafe(entityTypes[profile.entity_type]||"Outro")+'</span><span class="entity-type">'+linked.length+' vínculo(s)</span></div><h3>'+entitySafe(profile.canonical_name)+'</h3><p class="entity-card-summary">'+entitySafe(profile.summary||"Sem resumo de identificação.")+'</p>'+(aliases.length?'<small>Também conhecido como: '+aliases.map(entitySafe).join(", ")+'</small>':'')+'<div class="entity-card-stats"><span>'+new Set(linked.map(topic=>topic.investigation_id).filter(Boolean)).size+' investigação(ões)</span><span>'+events.length+' acontecimento(s)</span><span>'+connections.length+' relação(ões)</span><span>'+sourceCount+' fonte(s)</span></div>'+editForm+'<details><summary>Ver registros, relações e fontes</summary><div class="entity-topic-list">'+topicMarkup+'</div></details>'+sourceLink+'</article>';
  }).join("");
 }
 
