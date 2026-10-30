@@ -92,3 +92,35 @@ Não chamar a função automaticamente em carregamentos de página. Ela deve ser
 - Teste ponta a ponta com sessão real: pendente.
 
 A interface deve renderizar `answer` como texto seguro, exibir `citations` como links clicáveis e informar quando `grounded` for falso. Não renderizar HTML retornado pelo modelo.
+
+
+## 5. Estruturação para Atlas e linha do tempo
+
+**Função:** `research-structure`
+
+**Objetivo:** transformar uma pesquisa já revisada em propostas estruturadas de entidades, acontecimentos, relações e perguntas em aberto.
+
+### Chamada pelo cliente
+
+```js
+const { data, error } = await supabase.functions.invoke("research-structure", {
+  body: {
+    research_text: researchResult.answer,
+    citations: researchResult.citations,
+    investigation_id: currentInvestigationId // opcional, apenas valida propriedade
+  }
+});
+```
+
+### Resposta
+
+A função retorna:
+
+- `entities`: pessoas, organizações, lugares, acontecimentos e conceitos;
+- `events`: datas e acontecimentos para a linha do tempo;
+- `relationships`: relações propostas entre entidades;
+- `open_questions`: pontos que exigem nova apuração;
+- `evidence_refs`: referências que sustentam cada proposta;
+- `confidence`: nível de confiança indicado pelo modelo.
+
+**Segurança editorial:** a função retorna `proposals_only: true`, `requires_human_review: true` e `persisted: false`. Não grava automaticamente tópicos, conexões, perfis ou eventos. A interface deve permitir revisar, editar e aceitar cada proposta antes de persistir.
