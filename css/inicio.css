@@ -283,3 +283,7 @@ body.home-page{
  .note-widget,.library-widget{transform:none}
  .section-heading h2{font-size:24px}
 }
+
+/* Atalhos navegáveis da página inicial */
+.icon-action{display:grid;place-items:center;text-decoration:none;cursor:pointer}.profile-chip{text-decoration:none;cursor:pointer}
+.note-widget a{display:inline-block;color:var(--wine);font:700 11px "DM Sans";text-decoration:none}.note-widget a:hover,.profile-chip:hover{opacity:.78}
