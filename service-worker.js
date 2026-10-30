@@ -1,4 +1,4 @@
-const CACHE_NAME = "arquivo-investigativo-v21";
+const CACHE_NAME = "arquivo-investigativo-v22";
 
 const FILES_TO_CACHE = [
   "./",
@@ -10,6 +10,9 @@ const FILES_TO_CACHE = [
   "./atlas.html",
   "./maquina-do-tempo.html",
   "./meu-arquivo.html",
+  "./mural.html",
+  "./css/mural.css",
+  "./js/mural.js",
   "./explorar.html",
   "./css/explorar.css",
   "./js/explorar.js",
