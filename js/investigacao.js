@@ -13,7 +13,7 @@ function renderRecords(target,items,error,type){
  if(!items.length){el.innerHTML='<p class="record-empty">Nenhum registro adicionado ainda.</p>';return}
  el.innerHTML=items.map(item=>{
   const details=type==="note"?safeText(item.content):[item.author,item.notes].filter(Boolean).map(safeText).join(" · ");
-  const link=type==="source"&&item.url&&/^https?:\\/\\//i.test(item.url)?'<a href="'+safeText(item.url)+'" target="_blank" rel="noopener noreferrer">Abrir fonte ↗</a>':"";
+  const link=type==="source"&&item.url&&(item.url.startsWith("https://")||item.url.startsWith("http://"))?'<a href="'+safeText(item.url)+'" target="_blank" rel="noopener noreferrer">Abrir fonte ↗</a>':"";
   return '<article class="record-card"><div><h4>'+safeText(item.title)+'</h4><p>'+details+'</p>'+link+'</div><button type="button" class="record-delete" data-record-type="'+type+'" data-record-id="'+safeText(item.id)+'">Excluir</button></article>';
  }).join("");
  el.querySelectorAll(".record-delete").forEach(btn=>btn.addEventListener("click",()=>deleteRecord(btn.dataset.recordType,btn.dataset.recordId)));
@@ -33,7 +33,7 @@ $("#note-form").addEventListener("submit",async event=>{
 });
 $("#source-form").addEventListener("submit",async event=>{
  event.preventDefault();const status=$("#source-status");const button=event.currentTarget.querySelector("button");button.disabled=true;status.textContent="Salvando...";
- const raw=$("#source-url").value.trim();if(raw&&!/^https?:\\/\\//i.test(raw)){button.disabled=false;status.textContent="Use um link iniciado por http:// ou https://.";return}
+ const raw=$("#source-url").value.trim();if(raw&&!(raw.startsWith("https://")||raw.startsWith("http://"))){button.disabled=false;status.textContent="Use um link iniciado por http:// ou https://.";return}
  const result=await client.from("sources").insert({user_id:uid,investigation_id:id,title:$("#source-title").value.trim(),url:raw||null,author:$("#source-author").value.trim()||null,notes:$("#source-notes").value.trim()||null,source_type:"site"});
  button.disabled=false;if(result.error){status.textContent="Erro: "+result.error.message;return}
  event.currentTarget.reset();status.textContent="Fonte adicionada.";await loadRecords();
