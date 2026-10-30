@@ -96,4 +96,67 @@ $("#pdf-assign-form").addEventListener("submit",async event=>{
  if(result.error){status.textContent="Não foi possível vincular: "+result.error.message;return}
  status.textContent="PDF vinculado à investigação.";await loadPdfDocuments();
 });
+
+let latestResearch=null,latestStructure=null;
+const researchForm=$("#research-form");
+function renderResearchCitations(citations){
+ const list=$("#research-citations");
+ list.innerHTML=(citations||[]).length?citations.map(c=>'<li><a href="'+safeText(c.url)+'" target="_blank" rel="noopener noreferrer">['+safeText(c.ref)+'] '+safeText(c.title)+'</a></li>').join(""):'<li>Nenhuma referência verificável foi retornada.</li>';
+}
+researchForm?.addEventListener("submit",async event=>{
+ event.preventDefault();
+ const query=$("#research-query").value.trim(),depth=$("#research-depth").value,button=$("#research-submit");
+ if(query.length<5){$("#research-status").textContent="Escreva uma consulta com pelo menos 5 caracteres.";return;}
+ button.disabled=true;$("#research-status").textContent="Pesquisando fontes externas...";
+ $("#research-output").hidden=true;$("#structure-output").hidden=true;latestResearch=null;latestStructure=null;
+ const {data,error}=await client.functions.invoke("research-assistant",{body:{query,investigation_id:id,research_depth:depth}});
+ button.disabled=false;
+ if(error||!data?.answer){$("#research-status").textContent="Não foi possível concluir a pesquisa: "+(data?.error||error?.message||"resposta inválida");return;}
+ latestResearch=data;
+ $("#research-answer").textContent=data.answer;
+ renderResearchCitations(data.citations);
+ $("#research-grounding").textContent=data.grounded
+  ?"Pesquisa acompanhada por "+(data.citations?.length||0)+" referência(s)."
+  :"A pesquisa não retornou referências verificáveis. Trate o conteúdo como não confirmado.";
+ $("#research-saved").textContent=(data.saved_sources||0)+" nova(s) fonte(s) salva(s) neste dossiê.";
+ $("#research-output").hidden=false;
+ $("#research-status").textContent="Pesquisa concluída.";
+});
+$("#structure-research")?.addEventListener("click",async()=>{
+ if(!latestResearch)return;
+ const button=$("#structure-research");button.disabled=true;$("#structure-status").textContent="Identificando entidades, acontecimentos e relações...";
+ $("#structure-output").hidden=true;latestStructure=null;
+ const {data,error}=await client.functions.invoke("research-structure",{body:{
+  research_text:latestResearch.answer,citations:latestResearch.citations||[],investigation_id:id
+ }});
+ button.disabled=false;
+ if(error||!data?.proposals_only){$("#structure-status").textContent="Não foi possível estruturar a pesquisa: "+(data?.error||error?.message||"resposta inválida");return;}
+ latestStructure=data;
+ const entities=data.entities||[],events=data.events||[],relations=data.relationships||[];
+ const refs=item=>(item.evidence_refs||[]).map(n=>"["+n+"]").join(" ");
+ const card=(type,item,index,title,description)=>'<label class="proposal-item"><input type="checkbox" data-proposal-type="'+type+'" data-proposal-index="'+index+'"><span><strong>'+safeText(title)+'</strong><small>'+safeText(description||"Sem descrição")+'</small><small class="proposal-meta">Confiança: '+safeText(item.confidence||"low")+' · Evidências: '+safeText(refs(item)||"não indicadas")+'</small></span></label>';
+ $("#proposal-entities").innerHTML=entities.length?entities.map((x,i)=>card("entity",x,i,x.name,x.entity_type+" · "+x.description)).join(""):'<p class="record-empty">Nenhuma entidade identificada.</p>';
+ $("#proposal-events").innerHTML=events.length?events.map((x,i)=>card("event",x,i,x.title,(x.date||"Data não determinada")+" · "+x.description)).join(""):'<p class="record-empty">Nenhum acontecimento identificado.</p>';
+ $("#proposal-relations").innerHTML=relations.length?relations.map((x,i)=>card("relationship",x,i,x.source_entity+" — "+x.relation+" → "+x.target_entity,"Relação proposta entre entidades")).join(""):'<p class="record-empty">Nenhuma relação identificada.</p>';
+ $("#proposal-questions").textContent=(data.open_questions||[]).length?(data.open_questions||[]).map(q=>"• "+q).join("\n"):"Nenhuma questão em aberto retornada.";
+ $("#structure-output").hidden=false;
+ $("#structure-status").textContent="Propostas prontas para revisão. Nada foi salvo no Atlas ou na linha do tempo.";
+});
+$("#save-proposals")?.addEventListener("click",async()=>{
+ if(!latestResearch||!latestStructure)return;
+ const selected=type=>[...$("#structure-output").querySelectorAll('[data-proposal-type="'+type+'"]:checked')].map(el=>latestStructure[{entity:"entities",event:"events",relationship:"relationships"}[type]][Number(el.dataset.proposalIndex)]);
+ const entities=selected("entity"),events=selected("event"),acceptedNames=new Set(entities.map(x=>String(x.name).toLocaleLowerCase("pt-BR")));
+ const relationships=selected("relationship").filter(x=>acceptedNames.has(String(x.source_entity).toLocaleLowerCase("pt-BR"))&&acceptedNames.has(String(x.target_entity).toLocaleLowerCase("pt-BR")));
+ if(!entities.length&&!events.length&&!relationships.length){$("#structure-status").textContent="Marque ao menos uma proposta para salvar.";return;}
+ const button=$("#save-proposals");button.disabled=true;$("#structure-status").textContent="Salvando propostas aprovadas...";
+ const {data,error}=await client.rpc("accept_research_proposals",{
+  p_investigation_id:id,p_citations:latestResearch.citations||[],
+  p_entities:entities,p_events:events,p_relationships:relationships
+ });
+ button.disabled=false;
+ if(error){$("#structure-status").textContent="Não foi possível salvar: "+error.message;return;}
+ $("#structure-status").textContent="Salvo: "+data.saved_entities+" entidade(s), "+data.saved_events+" acontecimento(s), "+data.saved_relationships+" relação(ões) e "+data.saved_evidence_links+" vínculo(s) de evidência.";
+ await loadRecords();
+});
+
 init().then(async()=>{if(uid){await loadRecords();await loadPdfDocuments();}});
