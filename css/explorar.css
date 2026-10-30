@@ -4,3 +4,5 @@
 .save-destination select{width:100%;min-height:42px;padding:9px 12px;border:1px solid rgba(78,10,11,.28);border-radius:8px;background:#fff;font:inherit;color:#292421}
 .save-destination small{font-size:.78rem;opacity:.72}
 @media(max-width:640px){.save-destination{width:100%}}
+
+.result-actions button[data-create-case]{padding:8px 11px;border:1px solid #e3c9bd;background:#f7ece6;border-radius:7px}.result-actions button:disabled{opacity:.55;cursor:wait}
