@@ -296,7 +296,7 @@ A ausência de informação em uma fonte não é tratada automaticamente como co
 - Cada apontamento mantém tipo, severidade, explicação, próxima verificação e referências aos vínculos originais de evidência.
 - Chaves estrangeiras compostas impedem associar um apontamento a evidências de outro usuário ou de outra investigação.
 - A RPC `public.save_evidence_audit_findings` valida a propriedade da investigação e de cada evidência e grava execução, apontamentos e referências em uma única transação. É `SECURITY INVOKER`, exige sessão autenticada e não está disponível para `anon`.
-- Todo apontamento começa como `needs_review`. O pesquisador pode alterar para `confirmed_by_researcher` (corroborado após revisão) ou `dismissed` (descartado). Esses estados registram a avaliação humana; não representam certificação automática da verdade.
+- Todo apontamento começa como `needs_review`. O pesquisador pode alterar para `confirmed_by_researcher` (validado pelo pesquisador) ou `dismissed` (descartado). Esses estados registram a avaliação humana; não representam certificação automática da verdade.
 - RLS protege as três tabelas por proprietário e valida que a investigação associada também pertence ao usuário; os vínculos de evidência são limitados à mesma investigação.
 - Índices cobrem as chaves estrangeiras compostas do histórico para evitar varreduras desnecessárias. A exclusão da investigação remove seu histórico em cascata.
 - O histórico é exibido no painel do dossiê, com fontes e resumos vinculados.
