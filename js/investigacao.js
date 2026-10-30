@@ -224,42 +224,83 @@ async function loadEvidenceRegister(){
 }
 $("#load-evidence-register")?.addEventListener("click",loadEvidenceRegister);
 
+
 const auditTypeLabels={direct_contradiction:"Contradição direta",factual_discrepancy:"Divergência factual",chronology_inconsistency:"Inconsistência cronológica",unsupported_claim:"Afirmação sem apoio suficiente",corroboration:"Corroboração",source_dependence:"Possível dependência entre fontes"};
-const auditEvidenceById=new Map();
+let currentAuditData=null;
 function renderEvidenceAudit(data){
  const root=$("#evidence-audit-results");
  if(data.status==="insufficient_evidence"){
-  root.hidden=true;
-  $("#evidence-audit-status").textContent=data.message+" ("+(data.evidence_count||0)+" vínculo(s), "+(data.source_count||0)+" fonte(s)).";
-  return;
+  root.hidden=true;$("#save-audit-findings").hidden=true;
+  $("#evidence-audit-status").textContent=data.message+" ("+(data.evidence_count||0)+" vínculo(s), "+(data.source_count||0)+" fonte(s)).";return;
  }
- auditEvidenceById.clear();
- (data.evidence_index||[]).forEach(item=>auditEvidenceById.set(item.evidence_id,item));
+ currentAuditData=data;
+ const evidenceMap=new Map((data.evidence_index||[]).map(item=>[item.evidence_id,item]));
  $("#evidence-audit-summary").textContent=data.overall_summary||"A comparação não retornou uma síntese.";
  const issues=data.possible_conflicts||[];
- $("#evidence-audit-issues").innerHTML=issues.length?issues.map(item=>{
-  const refs=(item.evidence_ids||[]).map(id=>{
-   const ev=auditEvidenceById.get(id);if(!ev)return "";
-   const link=ev.source_url&&/^https?:\/\//i.test(ev.source_url)?'<a href="'+safeText(ev.source_url)+'" target="_blank" rel="noopener noreferrer">'+safeText(ev.source_title)+'</a>':safeText(ev.source_title);
+ $("#evidence-audit-issues").innerHTML=issues.length?issues.map((item,index)=>{
+  const refs=(item.evidence_ids||[]).map(eid=>{
+   const ev=evidenceMap.get(eid);if(!ev)return "";
+   const link=ev.source_url&&new RegExp("^https?://","i").test(ev.source_url)?'<a href="'+safeText(ev.source_url)+'" target="_blank" rel="noopener noreferrer">'+safeText(ev.source_title)+'</a>':safeText(ev.source_title);
    return '<div class="audit-evidence"><strong>'+link+'</strong><small>'+safeText(ev.target||"Registro relacionado")+' · Referência ['+safeText(ev.reference_number)+']</small><p>'+safeText(ev.evidence_summary||"Sem resumo associado.")+'</p></div>';
   }).join("");
-  return '<article class="audit-issue"><div class="audit-issue-head"><span class="audit-type">'+safeText(auditTypeLabels[item.issue_type]||"Ponto para revisão")+'</span><span class="audit-type audit-severity-'+safeText(item.severity)+'">'+safeText(item.severity)+'</span><strong>'+safeText(item.title)+'</strong></div><p>'+safeText(item.explanation)+'</p>'+refs+'<p><strong>Próxima verificação:</strong> '+safeText(item.next_step)+'</p></article>';
+  return '<article class="audit-issue"><label class="audit-save-choice"><input type="checkbox" class="audit-finding-check" data-audit-index="'+index+'"><span>Incluir no histórico</span></label><div class="audit-issue-head"><span class="audit-type">'+safeText(auditTypeLabels[item.issue_type]||"Ponto para revisão")+'</span><span class="audit-type audit-severity-'+safeText(item.severity)+'">'+safeText(item.severity)+'</span><strong>'+safeText(item.title)+'</strong></div><p>'+safeText(item.explanation)+'</p>'+refs+'<p><strong>Próxima verificação:</strong> '+safeText(item.next_step)+'</p></article>';
  }).join(""):'<p class="record-empty">Nenhum conflito ou divergência foi sinalizado nos resumos analisados. Isso não prova que as fontes concordem integralmente.</p>';
  const renderList=(selector,title,items)=>{const el=$(selector);el.innerHTML=items?.length?'<h5>'+title+'</h5><ul>'+items.map(x=>'<li>'+safeText(x)+'</li>').join("")+'</ul>':"";};
  renderList("#evidence-audit-corroborations","Possíveis corroborações",data.corroborations||[]);
  renderList("#evidence-audit-gaps","Lacunas de cobertura",data.coverage_gaps||[]);
- root.hidden=false;
- $("#evidence-audit-status").textContent="Comparação concluída com "+data.evidence_count+" vínculo(s) de evidência e "+data.source_count+" fonte(s). Revisão humana obrigatória.";
+ $("#save-audit-findings").hidden=!issues.length;root.hidden=false;
+ $("#evidence-audit-status").textContent="Comparação concluída com "+data.evidence_count+" vínculo(s) e "+data.source_count+" fonte(s). Marque os apontamentos que deseja guardar.";
 }
-$("#run-evidence-audit")?.addEventListener("click",async()=>{
- const button=$("#run-evidence-audit");button.disabled=true;
- $("#evidence-audit-status").textContent="Comparando as evidências já salvas...";
- $("#evidence-audit-results").hidden=true;
- const {data,error}=await client.functions.invoke("evidence-audit",{body:{investigation_id:id}});
+async function loadEvidenceAuditHistory(){
+ const root=$("#evidence-audit-history");if(!root)return;
+ root.innerHTML='<p class="record-empty">Carregando histórico...</p>';
+ const runsRes=await client.from("evidence_audit_runs").select("id,overall_summary,evidence_count,source_count,audited_at,created_at").eq("user_id",uid).eq("investigation_id",id).order("created_at",{ascending:false}).limit(20);
+ if(runsRes.error){root.textContent="Não foi possível carregar o histórico: "+runsRes.error.message;return;}
+ const runs=runsRes.data||[];if(!runs.length){root.innerHTML='<p class="record-empty">Nenhum apontamento foi salvo nesta investigação.</p>';return;}
+ const runIds=runs.map(r=>r.id);
+ const findingsRes=await client.from("evidence_audit_findings").select("id,run_id,issue_type,severity,title,explanation,next_step,status,created_at").eq("user_id",uid).eq("investigation_id",id).in("run_id",runIds).order("created_at",{ascending:false});
+ if(findingsRes.error){root.textContent="Não foi possível carregar os apontamentos.";return;}
+ const findings=findingsRes.data||[];if(!findings.length){root.innerHTML='<p class="record-empty">Nenhum apontamento salvo.</p>';return;}
+ const fids=findings.map(f=>f.id);
+ const relRes=await client.from("evidence_audit_finding_evidence").select("finding_id,evidence_link_id").eq("user_id",uid).eq("investigation_id",id).in("finding_id",fids);
+ if(relRes.error){root.textContent="Não foi possível carregar as referências.";return;}
+ const eids=[...new Set((relRes.data||[]).map(x=>x.evidence_link_id))];
+ const evRes=eids.length?await client.from("research_evidence_links").select("id,source_id,reference_number,evidence_excerpt").eq("user_id",uid).eq("investigation_id",id).in("id",eids):{data:[],error:null};
+ if(evRes.error){root.textContent="Não foi possível carregar os vínculos de evidência.";return;}
+ const sids=[...new Set((evRes.data||[]).map(x=>x.source_id))];
+ const srcRes=sids.length?await client.from("sources").select("id,title,url").eq("user_id",uid).eq("investigation_id",id).in("id",sids):{data:[],error:null};
+ if(srcRes.error){root.textContent="Não foi possível carregar as fontes.";return;}
+ const evMap=new Map((evRes.data||[]).map(x=>[x.id,x])),srcMap=new Map((srcRes.data||[]).map(x=>[x.id,x])),refs=new Map(),byRun=new Map();
+ (relRes.data||[]).forEach(rel=>{const ev=evMap.get(rel.evidence_link_id);if(!ev)return;const src=srcMap.get(ev.source_id);if(!refs.has(rel.finding_id))refs.set(rel.finding_id,[]);const label=src?.url&&new RegExp("^https?://","i").test(src.url)?'<a href="'+safeText(src.url)+'" target="_blank" rel="noopener noreferrer">'+safeText(src.title)+'</a>':safeText(src?.title||"Fonte indisponível");refs.get(rel.finding_id).push('<div class="audit-history-reference"><strong>'+label+' ['+safeText(ev.reference_number)+']</strong><p>'+safeText(ev.evidence_excerpt||"Resumo indisponível.")+'</p></div>');});
+ findings.forEach(f=>{if(!byRun.has(f.run_id))byRun.set(f.run_id,[]);byRun.get(f.run_id).push(f);});
+ const statusLabels={needs_review:"Em revisão",confirmed_by_researcher:"Corroborado após revisão",dismissed:"Descartado"};
+ root.innerHTML=runs.map(run=>{const items=byRun.get(run.id)||[];if(!items.length)return "";
+  return '<section class="audit-history-run"><div class="audit-history-run-head"><strong>'+safeText(new Date(run.audited_at||run.created_at).toLocaleString("pt-BR"))+'</strong><small>'+safeText(run.evidence_count)+' evidência(s) · '+safeText(run.source_count)+' fonte(s)</small></div><p>'+safeText(run.overall_summary)+'</p>'+items.map(f=>'<article class="audit-history-item"><div class="audit-issue-head"><span class="audit-type">'+safeText(auditTypeLabels[f.issue_type]||"Ponto para revisão")+'</span><span class="audit-type audit-severity-'+safeText(f.severity)+'">'+safeText(f.severity)+'</span><strong>'+safeText(f.title)+'</strong></div><p>'+safeText(f.explanation)+'</p>'+(refs.get(f.id)||[]).join("")+'<p><strong>Próxima verificação:</strong> '+safeText(f.next_step)+'</p><label class="audit-status-label">Revisão humana<select class="audit-status-select" data-finding-id="'+safeText(f.id)+'"><option value="needs_review" '+(f.status==="needs_review"?"selected":"")+'>Em revisão</option><option value="confirmed_by_researcher" '+(f.status==="confirmed_by_researcher"?"selected":"")+'>Corroborado após revisão</option><option value="dismissed" '+(f.status==="dismissed"?"selected":"")+'>Descartado</option></select></label></article>').join("")+'</section>';
+ }).join("")||'<p class="record-empty">Nenhum apontamento salvo.</p>';
+}
+$("#evidence-audit-history")?.addEventListener("change",async event=>{
+ const select=event.target.closest(".audit-status-select");if(!select)return;select.disabled=true;
+ const value=select.value;
+ const res=await client.from("evidence_audit_findings").update({status:value,reviewed_at:value==="needs_review"?null:new Date().toISOString(),updated_at:new Date().toISOString()}).eq("id",select.dataset.findingId).eq("user_id",uid).eq("investigation_id",id);
+ select.disabled=false;
+ $("#evidence-audit-history-status").textContent=res.error?"Não foi possível atualizar a revisão: "+res.error.message:"Revisão humana atualizada.";
+});
+$("#save-audit-findings")?.addEventListener("click",async()=>{
+ if(!currentAuditData)return;
+ const selected=[...document.querySelectorAll(".audit-finding-check:checked")].map(el=>currentAuditData.possible_conflicts[Number(el.dataset.auditIndex)]).filter(Boolean);
+ if(!selected.length){$("#evidence-audit-status").textContent="Marque pelo menos um apontamento para salvar.";return;}
+ const button=$("#save-audit-findings");button.disabled=true;$("#evidence-audit-status").textContent="Salvando apontamentos selecionados...";
+ const {data,error}=await client.rpc("save_evidence_audit_findings",{p_investigation_id:id,p_overall_summary:currentAuditData.overall_summary||"",p_evidence_count:currentAuditData.evidence_count||0,p_source_count:currentAuditData.source_count||0,p_audited_at:currentAuditData.audited_at||new Date().toISOString(),p_findings:selected.map(x=>({issue_type:x.issue_type,severity:x.severity,title:x.title,explanation:x.explanation,next_step:x.next_step,evidence_ids:x.evidence_ids}))});
  button.disabled=false;
+ if(error||!data?.persisted){$("#evidence-audit-status").textContent="Não foi possível salvar: "+(error?.message||"resposta inválida");return;}
+ $("#evidence-audit-status").textContent=data.saved_findings+" apontamento(s) salvo(s) como “Em revisão”.";
+ await loadEvidenceAuditHistory();
+});
+$("#run-evidence-audit")?.addEventListener("click",async()=>{
+ const button=$("#run-evidence-audit");button.disabled=true;$("#evidence-audit-status").textContent="Comparando as evidências já salvas...";$("#evidence-audit-results").hidden=true;
+ const {data,error}=await client.functions.invoke("evidence-audit",{body:{investigation_id:id}});button.disabled=false;
  if(error||!data){$("#evidence-audit-status").textContent="Não foi possível comparar as evidências: "+(data?.error||error?.message||"resposta inválida");return;}
- if(data.error){$("#evidence-audit-status").textContent=data.error;return;}
- renderEvidenceAudit(data);
+ if(data.error){$("#evidence-audit-status").textContent=data.error;return;}renderEvidenceAudit(data);
 });
 
-init().then(async()=>{if(uid){await loadRecords();await loadPdfDocuments();await loadEvidenceRegister();}});
+init().then(async()=>{if(uid){await loadRecords();await loadPdfDocuments();await loadEvidenceRegister();await loadEvidenceAuditHistory();}});
