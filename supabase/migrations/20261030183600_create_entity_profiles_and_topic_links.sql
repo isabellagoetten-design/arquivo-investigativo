@@ -33,8 +33,8 @@ begin
   end if;
 end $$;
 
-create index if not exists topics_entity_profile_id_idx
-  on public.topics(entity_profile_id)
+create index if not exists topics_entity_profile_owner_idx
+  on public.topics(entity_profile_id,user_id)
   where entity_profile_id is not null;
 
 alter table public.entity_profiles enable row level security;
