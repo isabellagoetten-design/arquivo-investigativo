@@ -2,6 +2,33 @@ const SUPABASE_URL="https://hoqbkpjwlmkmdvuzinyi.supabase.co";
 const SUPABASE_KEY="sb_publishable_fuFitarIu9yHJ_QPsRUP-Q_xVGJMcbg";
 const client=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const toast=document.getElementById("home-toast");
+
+const navToggle=document.getElementById("nav-toggle");
+const homeShell=document.querySelector(".home-shell");
+const navLabel=navToggle?.querySelector(".nav-toggle-label");
+navToggle?.addEventListener("click",()=>{
+ const mobile=window.matchMedia("(max-width: 760px)").matches;
+ if(mobile){
+  const open=homeShell.classList.toggle("mobile-open");
+  navToggle.setAttribute("aria-expanded",String(open));
+  if(navLabel)navLabel.textContent=open?"Fechar menu":"Abrir menu";
+ }else{
+  const collapsed=homeShell.classList.toggle("nav-collapsed");
+  navToggle.setAttribute("aria-expanded",String(!collapsed));
+  if(navLabel)navLabel.textContent=collapsed?"Expandir menu":"Recolher menu";
+ }
+});
+window.addEventListener("resize",()=>{
+ if(!window.matchMedia("(max-width: 760px)").matches){
+  homeShell.classList.remove("mobile-open");
+  if(navLabel)navLabel.textContent=homeShell.classList.contains("nav-collapsed")?"Expandir menu":"Recolher menu";
+  navToggle?.setAttribute("aria-expanded",String(!homeShell.classList.contains("nav-collapsed")));
+ }else if(!homeShell.classList.contains("mobile-open")){
+  if(navLabel)navLabel.textContent="Abrir menu";
+  navToggle?.setAttribute("aria-expanded","false");
+ }
+});
+
 const modal=document.getElementById("investigation-modal");
 const form=document.getElementById("investigation-form");
 let toastTimer;
@@ -53,7 +80,7 @@ async function loadInvestigations(){
  if(!currentUser)return;
  const {data,error}=await client.from("investigations").select("id,title,subject,category,description,created_at").eq("user_id",currentUser.id).order("created_at",{ascending:false}).limit(6);
  if(error){console.error("Erro ao carregar investigações:",error);return}
- const container=document.querySelector(".empty-investigation");
+ const container=document.querySelector("#recent-investigations-list");
  if(!container)return;
  if(!data||data.length===0){return}
  container.innerHTML=data.map(item=>`<button class="investigation-item" type="button" data-investigation-id="${escapeHtml(item.id)}"><h3>${escapeHtml(item.title)}</h3><p>${escapeHtml(item.description||item.subject||"Investigação em andamento.")}</p><span class="investigation-meta"><span>${escapeHtml(item.category)}</span><span>${new Date(item.created_at).toLocaleDateString("pt-BR")}</span></span><span class="item-open">Abrir investigação ↗</span></button>`).join("");
