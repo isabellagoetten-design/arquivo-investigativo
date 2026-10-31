@@ -21,23 +21,26 @@
         <img src="./icons/icon-192.png" alt="">
         <span>ARQUIVO<br>INVESTIGATIVO</span>
       </a>
+      <button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="true" aria-controls="primary-navigation">
+        <span class="nav-toggle-icon" aria-hidden="true">☰</span><span class="nav-toggle-label">Recolher menu</span>
+      </button>
       <p class="nav-caption">ESPAÇO DE INVESTIGAÇÃO</p>
-      <nav aria-label="Navegação principal">
-        <a class="nav-link active" href="./inicio.html"><span>⌂</span> Visão geral</a>
-        <a class="nav-link" href="./atlas.html"><span>✳</span> Atlas</a>
-        <a class="nav-link" href="./explorar.html"><span>⌕</span> Explorar</a>
-        <a class="nav-link" href="./conhecimento.html"><span>✧</span> Conhecimento</a>
-        <a class="nav-link" href="./pessoas.html"><span>♙</span> Pessoas</a>
-        <a class="nav-link" href="./entidades.html"><span>◈</span> Entidades</a>
-        <a class="nav-link" href="./laboratorio.html"><span>▧</span> Laboratório</a>
-        <a class="nav-link" href="./maquina-do-tempo.html"><span>◷</span> Máquina do Tempo</a>
-        <a class="nav-link" href="./biblioteca.html"><span>▤</span> Biblioteca</a>
-        <a class="nav-link" href="./meu-arquivo.html"><span>▣</span> Meu Arquivo</a>
-        <a class="nav-link" href="./mural.html"><span>▦</span> Mural</a>
+      <nav id="primary-navigation" aria-label="Navegação principal">
+        <a class="nav-link active" href="./inicio.html"><span class="nav-icon">⌂</span><span class="nav-text">Visão geral</span></a>
+        <a class="nav-link" href="./atlas.html"><span class="nav-icon">✳</span><span class="nav-text">Atlas</span></a>
+        <a class="nav-link" href="./explorar.html"><span class="nav-icon">⌕</span><span class="nav-text">Explorar</span></a>
+        <a class="nav-link" href="./conhecimento.html"><span class="nav-icon">✧</span><span class="nav-text">Conhecimento</span></a>
+        <a class="nav-link" href="./pessoas.html"><span class="nav-icon">♙</span><span class="nav-text">Pessoas</span></a>
+        <a class="nav-link" href="./entidades.html"><span class="nav-icon">◈</span><span class="nav-text">Entidades</span></a>
+        <a class="nav-link" href="./laboratorio.html"><span class="nav-icon">▧</span><span class="nav-text">Laboratório</span></a>
+        <a class="nav-link" href="./maquina-do-tempo.html"><span class="nav-icon">◷</span><span class="nav-text">Máquina do Tempo</span></a>
+        <a class="nav-link" href="./biblioteca.html"><span class="nav-icon">▤</span><span class="nav-text">Biblioteca</span></a>
+        <a class="nav-link" href="./meu-arquivo.html"><span class="nav-icon">▣</span><span class="nav-text">Meu Arquivo</span></a>
+        <a class="nav-link" href="./mural.html"><span class="nav-icon">▦</span><span class="nav-text">Mural</span></a>
       </nav>
       <div class="side-bottom">
         <div class="side-note"><span>✦</span><p>Uma boa pergunta pode abrir um arquivo inteiro.</p></div>
-        <button id="home-logout" class="logout-button">↪ Sair da conta</button>
+        <button id="home-logout" class="logout-button"><span aria-hidden="true">↪</span><span class="logout-label">Sair da conta</span></button>
       </div>
     </aside>
 
@@ -53,47 +56,58 @@
       <section class="welcome-block">
         <div>
           <p class="eyebrow"><span></span> SEU ESPAÇO DE DESCOBERTAS</p>
-          <h1>O que vamos <em>investigar</em> hoje?</h1>
-          <p class="welcome-copy">Reúna pistas, conecte ideias e transforme curiosidade em conhecimento.</p>
+          <h1>Seu arquivo está <em>aberto.</em></h1>
+          <p class="welcome-copy">Retome suas pesquisas, reúna pistas e conecte novas ideias.</p>
         </div>
         <div class="welcome-stamp" aria-hidden="true"><span>AI</span><small>ARQUIVO<br>Nº 001</small></div>
       </section>
 
-      <section class="quick-actions" aria-label="Ações rápidas">
-        <button class="quick-card quick-primary" type="button" data-coming="Nova investigação">
-          <span class="quick-symbol">＋</span><span><strong>Nova investigação</strong><small>Comece um novo dossiê</small></span><b>↗</b>
-        </button>
-        <button class="quick-card" type="button" id="quick-add-source">
-          <span class="quick-symbol source-symbol">↗</span><span><strong>Abrir biblioteca</strong><small>Consulte seus documentos e fontes</small></span><b>↗</b>
-        </button>
-        <a class="quick-card" href="./mural.html">
-          <span class="quick-symbol mural-symbol">▧</span><span><strong>Abrir mural</strong><small>Organize ideias visualmente</small></span><b>↗</b>
-        </a>
-      </section>
-
-      <div class="content-grid">
-        <section class="recent-section">
-          <div class="section-heading"><div><p class="eyebrow">SEU TRABALHO</p><h2>Investigações recentes</h2></div><a class="text-link" href="./meu-arquivo.html">Ver arquivo ↗</a></div>
-          <div class="empty-investigation">
-            <div class="empty-illustration"><span class="paper paper-back"></span><span class="paper paper-front">?</span><i>✳</i></div>
-            <div><h3>Seu próximo assunto começa aqui.</h3><p>Quando você criar uma investigação, ela aparecerá neste espaço para continuar de onde parou.</p><button class="outline-button" type="button" data-coming="Nova investigação">Criar primeira investigação <span>＋</span></button></div>
+      <div class="dashboard-layout">
+        <aside class="recent-rail">
+          <div class="section-heading">
+            <div><p class="eyebrow">SEU TRABALHO</p><h2>Pesquisas recentes</h2></div>
+            <a class="text-link" href="./meu-arquivo.html">Ver todas ↗</a>
           </div>
-        </section>
-
-        <aside class="right-column">
-          <section class="note-widget">
-            <div class="widget-top"><span class="widget-label">ANOTAÇÃO RÁPIDA</span><span>✳</span></div>
-            <h3>Uma ideia passando pela cabeça?</h3>
-            <p>Este espaço poderá guardar pensamentos soltos para você organizar depois.</p>
-            <a href="./mural.html">Escrever uma nota ↗</a>
-          </section>
-          <section class="library-widget">
-            <div class="widget-top"><span class="widget-label">CAIXA DE FERRAMENTAS</span><span>⌁</span></div>
-            <h3>Seu arquivo, suas ferramentas.</h3>
-            <ul><li><span>▤</span> Fontes e documentos</li><li><span>⌘</span> Mapas e conexões</li><li><span>◷</span> Linhas do tempo</li></ul>
-            <small>Abra cada ferramenta pela navegação principal.</small>
-          </section>
+          <div id="recent-investigations-list" class="recent-investigations-list">
+            <div class="recent-empty">
+              <span class="recent-empty-mark">✳</span>
+              <h3>Nenhuma investigação ainda</h3>
+              <p>Quando você criar uma pesquisa, ela aparecerá aqui para continuar de onde parou.</p>
+              <button class="outline-button" type="button" data-coming="Nova investigação">Criar investigação <span>＋</span></button>
+            </div>
+          </div>
+          <button class="new-investigation-link" type="button" data-coming="Nova investigação"><span>＋</span> Nova investigação</button>
         </aside>
+
+        <main class="mural-workspace">
+          <div class="mural-heading">
+            <div>
+              <p class="eyebrow">ESPAÇO VISUAL</p>
+              <h2>Seu mural investigativo</h2>
+              <p>Um lugar para reunir fragmentos, registrar descobertas e enxergar conexões.</p>
+            </div>
+            <a class="mural-open-link" href="./mural.html">Abrir mural completo <span>↗</span></a>
+          </div>
+
+          <section class="mural-preview" aria-label="Prévia dos tipos de cartões do mural">
+            <div class="mural-paperclip" aria-hidden="true"></div>
+            <div class="mural-preview-top"><span>PAINEL DE INVESTIGAÇÃO</span><span>ARQUIVO Nº 001</span></div>
+            <div class="mural-card-grid">
+              <article class="mural-card card-note"><span class="card-type">✎ ANOTAÇÕES</span><strong>Registre uma ideia</strong><small>Observações e pensamentos</small></article>
+              <article class="mural-card card-image"><span class="card-type">▧ IMAGENS</span><strong>Reúna referências</strong><small>Fotografias e recortes</small></article>
+              <article class="mural-card card-source"><span class="card-type">↗ FONTES</span><strong>Guarde evidências</strong><small>Sites e documentos</small></article>
+              <article class="mural-card card-idea"><span class="card-type">✳ IDEIAS</span><strong>Desenvolva hipóteses</strong><small>Perguntas e descobertas</small></article>
+              <article class="mural-card card-investigation"><span class="card-type">▤ INVESTIGAÇÕES</span><strong>Acompanhe dossiês</strong><small>Pesquisas em andamento</small></article>
+              <article class="mural-card card-connection"><span class="card-type">⌁ CONEXÕES</span><strong>Ligue os assuntos</strong><small>Relações entre descobertas</small></article>
+            </div>
+            <div class="mural-preview-footer"><span>COMPOSIÇÃO LIVRE · CARTÕES ORGANIZÁVEIS</span><span>✳</span></div>
+          </section>
+
+          <div class="mural-bottom-note">
+            <span class="mural-bottom-symbol">✦</span>
+            <p>Este espaço vai crescer com suas pesquisas. Você poderá organizar cartões, aproximar ideias e montar suas próprias composições.</p>
+          </div>
+        </main>
       </div>
       <footer class="home-footer"><span>ARQUIVO INVESTIGATIVO</span><span>UM ESPAÇO PARA PERGUNTAR, PESQUISAR E CONECTAR.</span></footer>
     </main>
